@@ -1,0 +1,8 @@
+D:\Projects\ASP\Dex.Web\Dex.Common\bin\Debug\netcoreapp3.0\Dex.Common.deps.json
+D:\Projects\ASP\Dex.Web\Dex.Common\bin\Debug\netcoreapp3.0\Dex.Common.dll
+D:\Projects\ASP\Dex.Web\Dex.Common\bin\Debug\netcoreapp3.0\Dex.Common.pdb
+D:\Projects\ASP\Dex.Web\Dex.Common\obj\Debug\netcoreapp3.0\Dex.Common.csprojAssemblyReference.cache
+D:\Projects\ASP\Dex.Web\Dex.Common\obj\Debug\netcoreapp3.0\Dex.Common.AssemblyInfoInputs.cache
+D:\Projects\ASP\Dex.Web\Dex.Common\obj\Debug\netcoreapp3.0\Dex.Common.AssemblyInfo.cs
+D:\Projects\ASP\Dex.Web\Dex.Common\obj\Debug\netcoreapp3.0\Dex.Common.dll
+D:\Projects\ASP\Dex.Web\Dex.Common\obj\Debug\netcoreapp3.0\Dex.Common.pdb
