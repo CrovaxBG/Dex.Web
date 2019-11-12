@@ -1,0 +1,128 @@
+﻿.nav li ul {
+    position: absolute;
+    left: 0;
+    top: 36px;
+    z-index: 1;
+}
+
+    .nav li ul li {
+        overflow: hidden;
+        height: 0;
+        -webkit-transition: height 200ms ease-in;
+        -moz-transition: height 200ms ease-in;
+        -o-transition: height 200ms ease-in;
+        transition: height 200ms ease-in;
+    }
+
+.nav ul > li:hover ul li {
+    height: 36px;
+}
+
+.nav ul {
+    *zoom: 1;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+    .nav ul:before, .nav ul:after {
+        content: "";
+        display: table;
+    }
+
+    .nav ul:after {
+        clear: both;
+    }
+
+    .nav ul > li {
+        float: left;
+        position: relative;
+    }
+
+.nav a {
+    display: block;
+    line-height: 1.2em;
+    color: white;
+    border-left: 1px solid #595959;
+    transition: 0.3s ease;
+    border-top: 4px solid transparent;
+    border-bottom: 4px solid transparent;
+    padding: 10px 20px;
+}
+
+nav a:hover {
+    border-top: 4px solid white;
+    border-bottom: 4px solid white;
+    padding: 10px;
+    text-decoration: none;
+}
+
+#signup a {
+    border-left: none;
+    border-right: 4px solid white;
+}
+
+    #signup a:hover {
+        padding: 10px;
+        margin-left: 20px;
+    }
+
+#login a {
+    border-left: none;
+}
+
+    #login a:hover {
+        padding: 10px;
+        margin-right: 20px;
+    }
+
+.nav li ul {
+    background: linear-gradient(to right, rgb(58, 123, 213), rgb(58, 96, 115));
+    border-radius: 5px;
+    border-top-left-radius: 0px;
+    margin-top: 15px;
+}
+
+    .nav li ul li {
+        width: 200px;
+    }
+
+    .nav li ul a {
+        border: none;
+    }
+
+        .nav li ul a:hover {
+            background: rgba(0,0,0,0.2);
+        }
+
+.last-child {
+    float: right;
+}
+
+.first-child {
+    float: left;
+}
+
+.nav-bar {
+    background: linear-gradient(to right, rgb(58, 123, 213), rgb(58, 96, 115));
+    position: fixed;
+    width: 100%;
+    top: 0;
+}
+
+.nav-bar-brand {
+    color: white;
+    font-size: 18px;
+    padding: 10px 20px;
+}
+
+.title {
+    padding: 20px;
+    margin-bottom: 20px;
+    margin-top: 80px;
+}
+
+.last-nav-item {
+    border-top: 2px solid white !important;
+    border-bottom: none !important;
+}

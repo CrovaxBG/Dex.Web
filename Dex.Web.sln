@@ -5,13 +5,13 @@ VisualStudioVersion = 16.0.29424.173
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dex.Web", "Dex.Web\Dex.Web.csproj", "{A8402ACE-1228-49FB-A4C0-CD17B2004092}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dex.Common", "Dex.Common\Dex.Common.csproj", "{A807973C-6BB6-48A5-AB92-2A9CB7F43068}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dex.Common", "Dex.Common\Dex.Common.csproj", "{A807973C-6BB6-48A5-AB92-2A9CB7F43068}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dex.DataAccess", "Dex.DataAccess\Dex.DataAccess.csproj", "{DAE53177-C0E5-449E-AC07-FC804E736FBD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dex.DataAccess", "Dex.DataAccess\Dex.DataAccess.csproj", "{DAE53177-C0E5-449E-AC07-FC804E736FBD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dex.Infrastructure", "Dex.Infrastructure\Dex.Infrastructure.csproj", "{DF87331B-39CD-4591-B5E5-D8E60F134DAC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dex.Infrastructure", "Dex.Infrastructure\Dex.Infrastructure.csproj", "{DF87331B-39CD-4591-B5E5-D8E60F134DAC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dex.Generation", "Dex.Generation\Dex.Generation.csproj", "{E07B7B0B-EE35-448D-A9F6-9FEF0D9012C7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dex.Generation", "Dex.Generation\Dex.Generation.csproj", "{E07B7B0B-EE35-448D-A9F6-9FEF0D9012C7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

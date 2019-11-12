@@ -34,6 +34,7 @@ namespace Dex.Web
                 .AddEntityFrameworkStores<DexContext>();
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
             services.AddMvc().AddMvcOptions(options => options.EnableEndpointRouting = false);
+            services.AddRazorPages();
 
         }
 
@@ -46,7 +47,7 @@ namespace Dex.Web
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("/Shared/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
@@ -62,6 +63,20 @@ namespace Dex.Web
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+            });
+
+            app.UseMvc(routes =>
+            {
+                routes.MapRoute(
+                    name: "Default",
+                    template: "{area=Home}/{controller=Home}/{action=Index}/{id?}");
+            });
+
+            app.UseMvc(routes =>
+            {
+                routes.MapRoute(
+                    name: "Areas",
+                    template: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
             });
         }
     }

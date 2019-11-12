@@ -6,3 +6,5 @@ D:\Projects\ASP\Dex.Web\Dex.Common\obj\Debug\netcoreapp3.0\Dex.Common.AssemblyIn
 D:\Projects\ASP\Dex.Web\Dex.Common\obj\Debug\netcoreapp3.0\Dex.Common.AssemblyInfo.cs
 D:\Projects\ASP\Dex.Web\Dex.Common\obj\Debug\netcoreapp3.0\Dex.Common.dll
 D:\Projects\ASP\Dex.Web\Dex.Common\obj\Debug\netcoreapp3.0\Dex.Common.pdb
+D:\Projects\ASP\Dex.Web\Dex.Common\obj\Debug\netcoreapp3.0\Dex.Common.Resources.ControlsResources.resources
+D:\Projects\ASP\Dex.Web\Dex.Common\obj\Debug\netcoreapp3.0\Dex.Common.csproj.GenerateResource.cache

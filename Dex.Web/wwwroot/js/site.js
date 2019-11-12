@@ -1,4 +1,17 @@
-﻿// Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
+﻿$(document).ready(function () {
+    $(window).on("load", function () {
+        $(window).scroll(function () {
+            var windowBottom = $(this).scrollTop() + $(this).innerHeight();
+            var index = 0;
+            $(".fade").each(function () {
+                console.log(index);
+                var objectBottom = $(this).offset().top + $(this).outerHeight() - 50;
 
-// Write your JavaScript code.
+                if (objectBottom < windowBottom) {
+                    if ($(this).css("opacity") == 0) { $(this).fadeTo(750 , 1); }
+                }
+                index++;
+            });
+        }).scroll();
+    });
+});
