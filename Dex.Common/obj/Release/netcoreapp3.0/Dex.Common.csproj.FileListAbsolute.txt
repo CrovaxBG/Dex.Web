@@ -1,9 +1,0 @@
-D:\Projects\ASP\Dex.Web\Dex.Common\bin\Release\netcoreapp3.0\Dex.Common.deps.json
-D:\Projects\ASP\Dex.Web\Dex.Common\bin\Release\netcoreapp3.0\Dex.Common.dll
-D:\Projects\ASP\Dex.Web\Dex.Common\bin\Release\netcoreapp3.0\Dex.Common.pdb
-D:\Projects\ASP\Dex.Web\Dex.Common\obj\Release\netcoreapp3.0\Dex.Common.Resources.ControlsResources.resources
-D:\Projects\ASP\Dex.Web\Dex.Common\obj\Release\netcoreapp3.0\Dex.Common.csproj.GenerateResource.cache
-D:\Projects\ASP\Dex.Web\Dex.Common\obj\Release\netcoreapp3.0\Dex.Common.AssemblyInfoInputs.cache
-D:\Projects\ASP\Dex.Web\Dex.Common\obj\Release\netcoreapp3.0\Dex.Common.AssemblyInfo.cs
-D:\Projects\ASP\Dex.Web\Dex.Common\obj\Release\netcoreapp3.0\Dex.Common.dll
-D:\Projects\ASP\Dex.Web\Dex.Common\obj\Release\netcoreapp3.0\Dex.Common.pdb
