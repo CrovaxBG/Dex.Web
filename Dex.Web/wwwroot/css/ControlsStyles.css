@@ -104,6 +104,7 @@ nav a:hover {
 }
 
 .nav-bar {
+    z-index: 10000;
     background: linear-gradient(to right, rgb(58, 123, 213), rgb(58, 96, 115));
     position: fixed;
     width: 100%;

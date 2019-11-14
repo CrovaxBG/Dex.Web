@@ -3,10 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Dex.DataAccess.Models;
+using Dex.Infrastructure.Contracts.IServices;
+using Dex.Infrastructure.Implementations.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,6 +20,8 @@ namespace Dex.Web
 {
     public class Startup
     {
+        public static string ConnectionString { get; private set; }
+
         public IConfiguration Configuration { get; }
 
         public Startup(IConfiguration configuration)
@@ -25,17 +31,23 @@ namespace Dex.Web
 
         public void ConfigureServices(IServiceCollection services)
         {
-            var connectionString = Configuration.GetSection("ConnectionStrings:DefaultConnection").Value;
-            services.AddDbContext<DexContext>(options =>
-                options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
-            services.AddScoped(provider => new DexContext(connectionString));
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddEntityFrameworkStores<DexContext>();
+            ConnectionString = Configuration.GetSection("ConnectionStrings:DefaultConnection").Value;
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
             services.AddMvc().AddMvcOptions(options => options.EnableEndpointRouting = false);
             services.AddRazorPages();
+            services.AddMvc().AddRazorPagesOptions(options =>
+            {
+                options.Conventions.AddPageRoute("/Home/Index", "");
 
+            }).SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+            services.AddDbContext<DexContext>(options =>
+                options.UseSqlServer(
+                    Configuration.GetConnectionString("DefaultConnection")));
+            services.AddScoped(provider => new DexContext(ConnectionString));
+            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+                .AddEntityFrameworkStores<DexContext>();
+            services.AddSingleton<IConfiguration>(Configuration);
+            services.AddTransient<IEmailService, EmailService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -58,26 +70,40 @@ namespace Dex.Web
 
             app.UseAuthorization();
 
+    app.UseMvc(routes =>
+    {
+        routes.MapRoute(
+            name: "Default",
+            template: "{area=Home}/{page=Index}");
+    });
+
+            //app.UseEndpoints(endpoints =>
+            //{
+            //    endpoints.MapControllerRoute(
+            //        name: "default",
+            //        pattern: "{controller=Home}/{action=Index}/{id?}");
+            //});
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{Area=Home}/{page=Index}");
             });
 
-            app.UseMvc(routes =>
-            {
-                routes.MapRoute(
-                    name: "Default",
-                    template: "{area=Home}/{controller=Home}/{action=Index}/{id?}");
-            });
+            //app.UseMvc(routes =>
+            //{
+            //    routes.MapRoute(
+            //        name: "Default",
+            //        template: "{area=Home}/{controller=Home}/{action=Index}/{id?}");
+            //});
 
-            app.UseMvc(routes =>
-            {
-                routes.MapRoute(
-                    name: "Areas",
-                    template: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
-            });
+            //app.UseMvc(routes =>
+            //{
+            //    routes.MapRoute(
+            //        name: "Areas",
+            //        template: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+            //});
         }
     }
 }

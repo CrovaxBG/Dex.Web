@@ -13,40 +13,60 @@ namespace Dex.DataAccess.UnitOfWork
         private Dex.DataAccess.Repository.IRepository<Dex.DataAccess.Models.AspNetUserRoles> _aspNetUserRoles;
         private Dex.DataAccess.Repository.IRepository<Dex.DataAccess.Models.AspNetUserTokens> _aspNetUserTokens;
         private Dex.DataAccess.Repository.IRepository<Dex.DataAccess.Models.AspNetUsers> _aspNetUsers;
-
         public Dex.DataAccess.Repository.IRepository<Dex.DataAccess.Models.AspNetRoleClaims> AspNetRoleClaims
         {
-            get { return _aspNetRoleClaims ??= new GenericRepository<AspNetRoleClaims>(_dbContext); }
+            get
+            {
+                return _aspNetRoleClaims ??= new GenericRepository<AspNetRoleClaims>(_dbContext);
+            }
         }
 
         public Dex.DataAccess.Repository.IRepository<Dex.DataAccess.Models.AspNetRoles> AspNetRoles
         {
-            get { return _aspNetRoles ??= new GenericRepository<AspNetRoles>(_dbContext); }
+            get
+            {
+                return _aspNetRoles ??= new GenericRepository<AspNetRoles>(_dbContext);
+            }
         }
 
         public Dex.DataAccess.Repository.IRepository<Dex.DataAccess.Models.AspNetUserClaims> AspNetUserClaims
         {
-            get { return _aspNetUserClaims ??= new GenericRepository<AspNetUserClaims>(_dbContext); }
+            get
+            {
+                return _aspNetUserClaims ??= new GenericRepository<AspNetUserClaims>(_dbContext);
+            }
         }
 
         public Dex.DataAccess.Repository.IRepository<Dex.DataAccess.Models.AspNetUserLogins> AspNetUserLogins
         {
-            get { return _aspNetUserLogins ??= new GenericRepository<AspNetUserLogins>(_dbContext); }
+            get
+            {
+                return _aspNetUserLogins ??= new GenericRepository<AspNetUserLogins>(_dbContext);
+            }
         }
 
         public Dex.DataAccess.Repository.IRepository<Dex.DataAccess.Models.AspNetUserRoles> AspNetUserRoles
         {
-            get { return _aspNetUserRoles ??= new GenericRepository<AspNetUserRoles>(_dbContext); }
+            get
+            {
+                return _aspNetUserRoles ??= new GenericRepository<AspNetUserRoles>(_dbContext);
+            }
         }
 
         public Dex.DataAccess.Repository.IRepository<Dex.DataAccess.Models.AspNetUserTokens> AspNetUserTokens
         {
-            get { return _aspNetUserTokens ??= new GenericRepository<AspNetUserTokens>(_dbContext); }
+            get
+            {
+                return _aspNetUserTokens ??= new GenericRepository<AspNetUserTokens>(_dbContext);
+            }
         }
 
         public Dex.DataAccess.Repository.IRepository<Dex.DataAccess.Models.AspNetUsers> AspNetUsers
         {
-            get { return _aspNetUsers ??= new GenericRepository<AspNetUsers>(_dbContext); }
+            get
+            {
+                return _aspNetUsers ??= new GenericRepository<AspNetUsers>(_dbContext);
+            }
         }
 
         public UnitOfWork(Dex.DataAccess.Models.DexContext dbContext)

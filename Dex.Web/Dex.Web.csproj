@@ -28,9 +28,4 @@
     <ProjectReference Include="..\Dex.Infrastructure\Dex.Infrastructure.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Areas\Home\Data\" />
-    <Folder Include="Areas\Home\Models\" />
-  </ItemGroup>
-
 </Project>

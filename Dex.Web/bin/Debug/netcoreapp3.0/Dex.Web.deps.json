@@ -2172,7 +2172,8 @@
         "dependencies": {
           "AutoMapper": "9.0.0",
           "Dex.Common": "1.0.0",
-          "Dex.DataAccess": "1.0.0"
+          "Dex.DataAccess": "1.0.0",
+          "Microsoft.AspNetCore.Identity.UI": "3.0.0"
         },
         "runtime": {
           "Dex.Infrastructure.dll": {}
