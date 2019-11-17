@@ -8,6 +8,8 @@ namespace Dex.DataAccess.Models
 {
     public partial class DexContext : IdentityDbContext<IdentityUser>
     {
+        public virtual DbSet<Log> Log { get; set; }
+
         public DexContext(DbContextOptions<DexContext> options)
             : base(options)
         {

@@ -6,7 +6,6 @@ using System.Text.RegularExpressions;
 using Dex.Common.DTO;
 using Dex.Common.Extensions;
 using Dex.DataAccess.Models;
-using Dex.DataAccess.Repository;
 using FluentGeneration;
 using FluentGeneration.Extensions;
 using FluentGeneration.Interfaces.Class;
@@ -39,8 +38,6 @@ namespace Dex.Generation
             var unitOfWorkPath = dataAccessPath + @"UnitOfWork\";
             var dtosPath = commonPath + @"DTO\";
 
-            GenerateIUnitOfWork(unitOfWorkPath, "Dex.DataAccess.UnitOfWork", entityTypes);
-            GenerateUnitOfWork(unitOfWorkPath, "Dex.DataAccess.UnitOfWork", entityTypes);
             GenerateDTOsFromEntities(dtosPath, "Dex.Common.DTO", entityTypes);
 
             Console.WriteLine("All files generated successfully");
@@ -52,6 +49,21 @@ namespace Dex.Generation
             foreach (var entityType in entityTypes)
             {
                 var dtoName = entityType.Name + "DTO";
+                var newFile = Path.Combine(path, dtoName + ".cs");
+                if (File.Exists(newFile))
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($@"{newFile} already exists, do you want to override it? Y/N");
+                    var key = Console.ReadKey();
+                    if (key.Key != ConsoleKey.Y)
+                    {
+                        Console.WriteLine($@"{newFile} was not overriden");
+                        continue;
+                    }
+
+                    Console.WriteLine($@"{newFile} was overriden");
+                    Console.ForegroundColor = ConsoleColor.White;
+                }
                 new FileBuilder()
                     .DefineFile()
                         .Begin().WithPath(path).WithName(dtoName)
@@ -92,113 +104,6 @@ namespace Dex.Generation
                 }
 
                 return name;
-            }
-        }
-
-        private static void GenerateIUnitOfWork(string path, string @namespace, IEnumerable<Type> entityTypes)
-        {
-            new FileBuilder()
-                .DefineFile()
-                    .Begin().WithPath(path).WithName("IUnitOfWork")
-                        .WithInterface()
-                        .Begin()
-                            .WithNamespace(@namespace).WithUsingDirectives("Dex.DataAccess.Models", "Dex.DataAccess.Repository")
-                            .WithAccessSpecifier(AccessSpecifier.Public).WithName("IUnitOfWork").WithAttributes()
-                            .WithGenericArguments().WithGenericArgumentConstraint().WithInheritance()
-                            .WithProperties(value => IUnitOfWorkPropertySequenceGenerator(value, entityTypes))
-                            .WithMethod()
-                                .Begin()
-                                    .WithAccessSpecifier(AccessSpecifier.None).WithAccessModifier(AccessModifiers.None)
-                                    .WithType(typeof(void)).WithName("SaveChanges").WithAttributes().WithGenericArguments()
-                                    .WithGenericArgumentConstraint().WithParameters().WithEmptyBody()
-                                .End()
-                            .End()
-                        .End()
-                    .End()
-                .End()
-            .Build();
-        }
-
-        private static void GenerateUnitOfWork(string path, string @namespace, IEnumerable<Type> entityTypes)
-        {
-            new FileBuilder()
-                .DefineFile()
-                    .Begin().WithPath(path).WithName("UnitOfWork")
-                        .WithClass()
-                        .Begin()
-                            .WithNamespace(@namespace).WithUsingDirectives("Dex.DataAccess.Models", "Dex.DataAccess.Repository")
-                            .WithAccessSpecifier(AccessSpecifier.Public).WithClassType(ClassType.Partial).WithName("UnitOfWork").WithAttributes()
-                            .WithGenericArguments().WithGenericArgumentConstraint().WithInheritance("IUnitOfWork")
-                            .WithField()
-                                .Begin()
-                                    .WithAccessSpecifier(AccessSpecifier.Private).WithAccessModifier(AccessModifiers.Readonly)
-                                    .WithType(typeof(DexContext)).WithName("_dbContext").WithAttributes().WithNoValue()
-                                .End()
-                            .WithMethod()
-                                .Begin()
-                                    .WithAccessSpecifier(AccessSpecifier.Public).WithAccessModifier(AccessModifiers.None)
-                                    .WithType("UnitOfWork").WithName("").WithAttributes().WithGenericArguments().WithGenericArgumentConstraint()
-                                    .WithParameters(Parameter.Standard(typeof(DexContext), "dbContext")).WithMethodBody("_dbContext = dbContext;")
-                                .End()
-                            .WithProperties(value => UnitOfWorkPropertySequenceGenerator(value, entityTypes))
-                            .WithFields(value => UnitOfWorkFieldSequenceGenerator(value, entityTypes))
-                            .WithMethod()
-                                .Begin()
-                                    .WithAccessSpecifier(AccessSpecifier.Public).WithAccessModifier(AccessModifiers.None)
-                                    .WithType(typeof(void)).WithName("SaveChanges").WithAttributes().WithGenericArguments()
-                                    .WithGenericArgumentConstraint().WithParameters().WithMethodBody("_dbContext.SaveChanges();")
-                                .End()
-                            .End()
-                        .End()
-                    .End()
-                .End()
-            .Build();
-        }
-
-        private static IEnumerable<IProperty<IClassBody>> UnitOfWorkPropertySequenceGenerator(Func<IProperty<IClassBody>> value, IEnumerable<Type> entityTypes)
-        {
-            foreach (var entityType in entityTypes)
-            {
-                var fieldName = $"_{entityType.Name.ToLowerFirstChar()}";
-
-                var getBody = $@"return {fieldName} ??= new GenericRepository<{entityType.Name}>(_dbContext);";
-
-                var type = typeof(IRepository<>).MakeGenericType(entityType);
-                yield return value.Invoke()
-                    .Begin()
-                    .WithAccessSpecifier(AccessSpecifier.Public).WithAccessModifier(AccessModifiers.None)
-                    .WithType(type).WithName(entityType.Name).WithAttributes()
-                    .WithGetAccessSpecifier(AccessSpecifier.None).WithGetBody(getBody)
-                    .WithSetAccessSpecifier(AccessSpecifier.None).NoSet()
-                    .WithNoValue();
-            }
-        }
-
-        private static IEnumerable<IProperty<IInterfaceBody>> IUnitOfWorkPropertySequenceGenerator(Func<IProperty<IInterfaceBody>> value, IEnumerable<Type> entityTypes)
-        {
-            foreach (var entityType in entityTypes)
-            {
-                var type = typeof(IRepository<>).MakeGenericType(entityType);
-                yield return value.Invoke()
-                    .Begin()
-                    .WithAccessSpecifier(AccessSpecifier.None).WithAccessModifier(AccessModifiers.None)
-                    .WithType(type).WithName(entityType.Name).WithAttributes()
-                    .WithGetAccessSpecifier(AccessSpecifier.None).AutoGet()
-                    .WithSetAccessSpecifier(AccessSpecifier.None).NoSet()
-                    .WithNoValue();
-            }
-        }
-
-        private static IEnumerable<IField> UnitOfWorkFieldSequenceGenerator(Func<IField> value, IEnumerable<Type> entityTypes)
-        {
-            foreach (var entityType in entityTypes)
-            {
-                var type = typeof(IRepository<>).MakeGenericType(entityType);
-                yield return value.Invoke()
-                    .Begin()
-                    .WithAccessSpecifier(AccessSpecifier.Private).WithAccessModifier(AccessModifiers.None)
-                    .WithType(type).WithName($"_{entityType.Name.ToLowerFirstChar()}").WithAttributes()
-                    .WithNoValue();
             }
         }
     }

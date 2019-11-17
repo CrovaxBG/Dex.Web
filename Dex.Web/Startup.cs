@@ -1,12 +1,16 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
+using AutoMapper;
 using Dex.DataAccess.Models;
 using Dex.Infrastructure.Contracts.IServices;
 using Dex.Infrastructure.Implementations.Services;
+using Dex.Infrastructure.Mapping;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -44,10 +48,29 @@ namespace Dex.Web
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
             services.AddScoped(provider => new DexContext(ConnectionString));
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            services.AddDefaultIdentity<IdentityUser>(options =>
+                {
+                    options.User.RequireUniqueEmail = true;
+                    options.SignIn.RequireConfirmedAccount = true;
+                    options.Password.RequireDigit = false;
+                    options.Password.RequireLowercase = false;
+                    options.Password.RequireNonAlphanumeric = false;
+                    options.Password.RequireUppercase = false;
+                    options.Password.RequiredLength = 0;
+                    options.Password.RequiredUniqueChars = 0;
+                })
                 .AddEntityFrameworkStores<DexContext>();
             services.AddSingleton<IConfiguration>(Configuration);
+            var mappingConfig = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile<EntityProfile>();
+            });
+            
+            var mapper = mappingConfig.CreateMapper();
+            services.AddSingleton(mapper);
+
             services.AddTransient<IEmailService, EmailService>();
+            services.AddTransient<ILoggerService, LoggerService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -63,6 +86,7 @@ namespace Dex.Web
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
@@ -70,19 +94,12 @@ namespace Dex.Web
 
             app.UseAuthorization();
 
-    app.UseMvc(routes =>
-    {
-        routes.MapRoute(
-            name: "Default",
-            template: "{area=Home}/{page=Index}");
-    });
-
-            //app.UseEndpoints(endpoints =>
-            //{
-            //    endpoints.MapControllerRoute(
-            //        name: "default",
-            //        pattern: "{controller=Home}/{action=Index}/{id?}");
-            //});
+            app.UseMvc(routes =>
+            {
+                routes.MapRoute(
+                    name: "Default",
+                    template: "{area=Home}/{page=Index}");
+            });
 
             app.UseEndpoints(endpoints =>
             {
@@ -90,20 +107,6 @@ namespace Dex.Web
                     name: "default",
                     pattern: "{Area=Home}/{page=Index}");
             });
-
-            //app.UseMvc(routes =>
-            //{
-            //    routes.MapRoute(
-            //        name: "Default",
-            //        template: "{area=Home}/{controller=Home}/{action=Index}/{id?}");
-            //});
-
-            //app.UseMvc(routes =>
-            //{
-            //    routes.MapRoute(
-            //        name: "Areas",
-            //        template: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
-            //});
         }
     }
 }

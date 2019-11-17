@@ -97,7 +97,7 @@ namespace Dex.Common.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Login.
+        ///   Looks up a localized string similar to Log In.
         /// </summary>
         public static string Login {
             get {

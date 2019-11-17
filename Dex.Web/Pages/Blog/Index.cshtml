@@ -13,7 +13,7 @@
             <button type="submit" class="btn btn-primary" asp-page-handler="Comment" asp-route-postId="10" asp-route-postComment="I commented">Comment</button>
         </div>
         <div class="form-group">
-            <button type="submit" class="btn btn-primary" asp-page-handler="Post" asp-route-postId="15">Post</button>
+            <button type="submit" id="buttonBusyIndicator" class="btn btn-primary" asp-page-handler="Post" asp-route-postId="15">Post</button>
         </div>
     </form>
     <h2>@Model.TestMessage</h2>

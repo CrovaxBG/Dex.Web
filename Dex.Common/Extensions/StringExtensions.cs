@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Mail;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Dex.Common.Extensions
 {
@@ -15,6 +17,12 @@ namespace Dex.Common.Extensions
             }
 
             return newString;
+        }
+
+        public static bool IsValidEmailAddress(this string emailAddress)
+        {
+            const string pattern = @"\A(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)\Z";
+            return Regex.IsMatch(emailAddress, pattern, RegexOptions.IgnoreCase);
         }
     }
 }

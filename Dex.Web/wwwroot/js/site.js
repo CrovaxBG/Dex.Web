@@ -8,10 +8,25 @@
                 var objectBottom = $(this).offset().top + $(this).outerHeight() - 50;
 
                 if (objectBottom < windowBottom) {
-                    if ($(this).css("opacity") == 0) { $(this).fadeTo(750 , 1); }
+                    if ($(this).css("opacity") == 0) { $(this).fadeTo(750, 1); }
                 }
                 index++;
             });
         }).scroll();
     });
+});
+
+function displayBusyIndicator() {
+    $('.loading').show();
+}
+
+
+$(document).ready(function () {
+    $(document).on('submit', 'form',
+        function () {
+            if ($(document.activeElement).attr('id') == 'buttonBusyIndicator') {
+                $(document.activeElement).prop('disabled', true);
+                displayBusyIndicator();
+            }
+        });
 });

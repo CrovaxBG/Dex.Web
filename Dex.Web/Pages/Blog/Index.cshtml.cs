@@ -1,13 +1,16 @@
+using Dex.Infrastructure.Contracts.IServices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 
 namespace Dex.Web.Pages.Blog
 {
+    [Authorize()]
     public class IndexModel : PageModel
     {
         public string TestMessage { get; set; }
 
-        public IndexModel(ILogger<IndexModel> logger)
+        public IndexModel(ILoggerService logger)
         {
             //fetch data from service
         }

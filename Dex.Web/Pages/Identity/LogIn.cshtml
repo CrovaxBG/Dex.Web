@@ -1,4 +1,48 @@
 ﻿@page
+@using Dex.Common.Resources
+@using Dex.Web.Pages.Identity
 @model Dex.Web.Pages.Identity.LogInModel
 @{
+}
+
+<div class="row title">
+    <div class="col-md-4">
+        <form method="post">
+            <h4>@IdentityResources.Login</h4>
+            <hr />
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="ViewModel.UsernameOrEmail"></label>
+                <input asp-for="ViewModel.UsernameOrEmail" class="form-control" />
+                <span asp-validation-for="ViewModel.UsernameOrEmail" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ViewModel.Password"></label>
+                <input asp-for="ViewModel.Password" class="form-control" type="password" />
+                <span asp-validation-for="ViewModel.Password" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input asp-for="ViewModel.StaySignedIn" class="checkbox" />
+                <label asp-for="ViewModel.StaySignedIn"></label>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block">@IdentityResources.Login</button>
+
+            <p class="form-group">
+                <p>
+                    <a id="forgot-password" asp-page="/Identity/ForgottenPassword">@IdentityResources.ForgottenPassword</a>
+                </p>
+                <p>
+                    <a asp-page="/Identity/SignUp" asp-route-returnUrl="@Model.ReturnUrl">@IdentityResources.SignUpIfNew</a>
+                </p>
+                <p>
+                    <a asp-page="/Identity/_ResendConfirmationEmail">@IdentityResources.ResendEmailConfirmation</a>
+                </p>
+            </p>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
 }

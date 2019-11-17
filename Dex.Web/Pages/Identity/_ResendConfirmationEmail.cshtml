@@ -1,0 +1,42 @@
+﻿@page
+@using Dex.Common.Resources
+@model Dex.Web.Pages.Identity._ResendConfirmationEmailModel
+
+<div class="container">
+    <div class="title modal " tabindex="-1" id="loginModal"
+         data-keyboard="false" data-backdrop="static">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="modal-header">
+                    <h4>@IdentityResources.ResendEmailConfirmation</h4>
+                    <button type="button" class="close" data-dismiss="modal">×</button>
+                </div>
+                <div class="modal-body">
+                    <form method="post">
+                        <div class="form-group">
+                            <input asp-for="Email" class="form-control" type="text" placeholder="Email" id="inputUserName" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+                        <div class="modal-footer">
+                            <button id="submitButton" type="submit" class="btn btn-primary col-md-2">@IdentityResources.Send</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#loginModal").modal('show');
+        });
+
+        $("#btnHideModal").click(function () {
+            $("#loginModal").modal('hide');
+        });
+    </script>
+}

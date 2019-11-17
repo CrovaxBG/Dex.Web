@@ -1,5 +1,6 @@
 using System.Text;
 using System.Threading.Tasks;
+using Dex.Infrastructure.Contracts.IServices;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -11,11 +12,11 @@ namespace Dex.Web.Pages.Identity
     public class ConfirmEmailModel : PageModel
     {
         private readonly UserManager<IdentityUser> _userManager;
-        private readonly ILogger<ConfirmEmailModel> _logger;
+        private readonly ILoggerService _logger;
 
         public string StatusMessage { get; set; }
 
-        public ConfirmEmailModel(UserManager<IdentityUser> userManager, ILogger<ConfirmEmailModel> logger)
+        public ConfirmEmailModel(UserManager<IdentityUser> userManager, ILoggerService logger)
         {
             _logger = logger;
             _userManager = userManager;
@@ -31,8 +32,8 @@ namespace Dex.Web.Pages.Identity
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
             {
-                _logger.LogInformation($"Unable to load user with ID '{userId}'.");
-                return NotFound($"Unable to load user with requested ID.");
+                await _logger.Log($@"Unable to load user with ID '{userId}'.");
+                return NotFound("Unable to load user with requested ID.");
             }
 
             code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
