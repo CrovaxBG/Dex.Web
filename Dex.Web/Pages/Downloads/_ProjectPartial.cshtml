@@ -1,0 +1,32 @@
+﻿@model Dex.Web.Pages.Downloads.ProjectBasicViewModel
+
+@{
+    var pageUrl = $"/Downloads/{Model.ProjectName.Replace(" ",string.Empty)}";
+}
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">
+            @Model.ProjectName
+            <div class="float-right">
+                @if (!string.IsNullOrEmpty(Model.ProjectRepositoryIconUrl))
+                {
+                    <a href="@Model.ProjectRepositoryLink" class="text-decoration-none">
+                        <img src="@Url.Content(Model.ProjectRepositoryIconUrl)" alt="repo" width="30" height="30" class="btn-3"/>
+                    </a>
+                }
+                @if (!string.IsNullOrEmpty(Model.ProjectExecutableIconUrl))
+                {
+                    <a asp-page="/Downloads/FluentGeneration" asp-page-handler="DownloadExecutable" asp-route-zipName="@Model.ProjectExecutableName" class="text-decoration-none">
+                        <img src="@Url.Content(Model.ProjectExecutableIconUrl)" alt="exe" width="30" height="30"/>
+                    </a>
+                }
+            </div>
+        </h5>
+        <hr />
+        <p class="card-text">@Model.ProjectDescription</p>
+        <br />
+        <a asp-page="@pageUrl">
+            <button class="btn btn-block btn-primary">See details</button>
+        </a>
+    </div>
+</div>

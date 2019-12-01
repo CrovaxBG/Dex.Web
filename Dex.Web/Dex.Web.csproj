@@ -28,4 +28,9 @@
     <ProjectReference Include="..\Dex.Infrastructure\Dex.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="wwwroot\images\exe_icon.png" />
+    <None Include="wwwroot\images\github_repo_icon.png" />
+  </ItemGroup>
+
 </Project>

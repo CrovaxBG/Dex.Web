@@ -50,7 +50,25 @@
     padding: 10px 20px;
 }
 
+.nav button {
+    display: block;
+    line-height: 1.2em;
+    color: white;
+    border-left: 1px solid #595959;
+    transition: 0.3s ease;
+    border-top: 4px solid transparent;
+    border-bottom: 4px solid transparent;
+    padding: 10px 20px;
+}
+
 nav a:hover {
+    border-top: 4px solid white;
+    border-bottom: 4px solid white;
+    padding: 10px;
+    text-decoration: none;
+}
+
+nav button:hover {
     border-top: 4px solid white;
     border-bottom: 4px solid white;
     padding: 10px;
@@ -62,19 +80,38 @@ nav a:hover {
     border-right: 4px solid white;
 }
 
-    #signup a:hover {
-        padding: 10px;
-        margin-left: 20px;
-    }
+#signup button {
+    border-left: none;
+    border-right: 4px solid white;
+}
+
+#signup a:hover {
+    padding: 10px;
+    margin-left: 20px;
+}
+
+#signup button:hover {
+    padding: 10px;
+    margin-left: 20px;
+}
 
 #login a {
     border-left: none;
 }
 
-    #login a:hover {
-        padding: 10px;
-        margin-right: 20px;
-    }
+#login button {
+    border-left: none;
+}
+
+#login a:hover {
+    padding: 10px;
+    margin-right: 20px;
+}
+
+#login button:hover {
+    padding: 10px;
+    margin-right: 20px;
+}
 
 .nav li ul {
     background: linear-gradient(to right, rgb(58, 123, 213), rgb(58, 96, 115));
@@ -91,9 +128,13 @@ nav a:hover {
         border: none;
     }
 
-        .nav li ul a:hover {
-            background: rgba(0,0,0,0.2);
-        }
+    .nav li ul button {
+        border: none;
+    }
+
+    .nav li ul a:hover {
+        background: rgba(0,0,0,0.2);
+    }
 
 .last-child {
     float: right;
@@ -120,10 +161,111 @@ nav a:hover {
 .title {
     padding: 20px;
     margin-bottom: 20px;
-    margin-top: 80px;
+    margin-top: 80px !important;
 }
 
 .last-nav-item {
     border-top: 2px solid white !important;
     border-bottom: none !important;
+}
+
+.link {
+    background-color: Transparent;
+    text-decoration: none;
+    color: white;
+    cursor: pointer;
+    border: 0;
+}
+
+    .link:focus {
+        outline: none;
+        outline-style: none;
+        outline-color: transparent;
+        outline-width: 0px;
+    }
+
+.vl {
+    border-left: 10px solid rgba(0,0,0,.1);
+    height: 84.5%;
+    position: fixed;
+    margin-right: 50px;
+}
+
+.vl-center {
+    border-left: 1px solid rgba(0,0,0,.1);
+    height: 100%;
+    display: inline-block;
+    margin-top: 35px; 
+    position: absolute;
+}
+
+.horizontal-li {
+    display: inline-block;
+    list-style-type: none;
+    margin-right: 10px;
+    margin-left: 10px;
+    margin-bottom: 20px;
+    width: 45%;
+}
+
+.pagination {
+    display: inline-block;
+}
+
+    .pagination li {
+        display: inline-block;
+    }
+
+    .pagination a {
+        transition: background-color .3s;
+        color: black;
+        padding: 8px 16px;
+        text-decoration: none;
+        border-radius: 5px;
+        float: left;
+    }
+
+        .pagination a.active {
+            background-color: #1b6ec2;
+            color: white;
+        }
+
+        .pagination a:hover:not(.active) {
+            background-color: #ddd;
+        }
+
+.float-right {
+    float: right;
+}
+
+.float-left {
+    float: right;
+}
+
+.text-decoration-none {
+    text-decoration: none;
+}
+@import url(https://fonts.googleapis.com/css?family=Roboto:400,100,900);
+$red: #E1332D;
+ $white: #fff;
+
+
+
+.btn-3 {
+    background: lighten($red, 3%);  
+    border: 1px solid darken($red, 4%);
+    box-shadow: 0px 2px 0 darken($red, 5%), 2px 4px 6px darken($red, 2%);
+    font-weight: 900;
+    letter-spacing: 1px;
+    transition: all 150ms linear;
+}
+
+.btn-3:hover {
+    background: darken($red, 1.5%);
+    border: 1px solid rgba(#000, .05);
+    box-shadow: 1px 1px 2px rgba(#fff, .2);
+    color: lighten($red, 18%); 
+    text-decoration: none;
+    text-shadow: -1px -1px 0 darken($red, 9.5%);
+    transition: all 250ms linear;
 }

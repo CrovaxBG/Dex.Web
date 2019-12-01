@@ -1,4 +1,5 @@
 using System;
+using System.Security.Claims;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
@@ -43,6 +44,9 @@ namespace Dex.Web.Pages.Identity
 
         public async Task OnGetAsync(string returnUrl = null)
         {
+            //var user = await _userManager.FindByEmailAsync("denis_gls@abv.bg");
+            //var result = await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.Role, "Admin"));
+
             ReturnUrl = returnUrl;
         }
 

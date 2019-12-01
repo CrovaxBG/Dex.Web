@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Dex.Infrastructure.Contracts.IServices;
+using Dex.Web.Helpers;
 using Dex.Web.ViewModels.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -41,13 +42,12 @@ namespace Dex.Web.Pages.Identity
                     userName = user.UserName;
                 }
 
-                var result = await _signInManager.PasswordSignInAsync(
-                    userName, ViewModel.Password,
-                    ViewModel.StaySignedIn, lockoutOnFailure: true);
+                var result = await _signInManager.PasswordSignInAsync(userName, ViewModel.Password,ViewModel.StaySignedIn, true);
 
                 if (result.Succeeded)
                 {
                     await _loggerService.Log("User logged in.");
+                    this.SetRedirectMessage($"Welcome {userName}");
                     return LocalRedirect(returnUrl);
                 }
                 if (result.IsLockedOut)

@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Dex.Web.Pages.Blog
 {
-    [Authorize()]
+    [Authorize(Policy = "Admin")]
     public class IndexModel : PageModel
     {
         public string TestMessage { get; set; }

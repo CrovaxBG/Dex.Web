@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
 using Dex.DataAccess.Models;
@@ -36,6 +37,13 @@ namespace Dex.Web
         public void ConfigureServices(IServiceCollection services)
         {
             ConnectionString = Configuration.GetSection("ConnectionStrings:DefaultConnection").Value;
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("User", policy => policy.RequireRole("User"));
+                options.AddPolicy("Admin", policy => policy.RequireClaim(ClaimTypes.Role, "Admin"));
+            });
+
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
             services.AddMvc().AddMvcOptions(options => options.EnableEndpointRouting = false);
             services.AddRazorPages();
@@ -44,11 +52,13 @@ namespace Dex.Web
                 options.Conventions.AddPageRoute("/Home/Index", "");
 
             }).SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+
             services.AddDbContext<DexContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
             services.AddScoped(provider => new DexContext(ConnectionString));
-            services.AddDefaultIdentity<IdentityUser>(options =>
+
+            services.AddIdentity<IdentityUser, IdentityRole>(options =>
                 {
                     options.User.RequireUniqueEmail = true;
                     options.SignIn.RequireConfirmedAccount = true;
@@ -59,7 +69,16 @@ namespace Dex.Web
                     options.Password.RequiredLength = 0;
                     options.Password.RequiredUniqueChars = 0;
                 })
-                .AddEntityFrameworkStores<DexContext>();
+                .AddEntityFrameworkStores<DexContext>()
+                .AddDefaultTokenProviders();
+
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = $"/Identity/LogIn";
+                options.LogoutPath = $"/Identity/LogOut";
+                options.AccessDeniedPath = $"/Home/Index";
+            });
+
             services.AddSingleton<IConfiguration>(Configuration);
             var mappingConfig = new MapperConfiguration(mc =>
             {
@@ -93,6 +112,7 @@ namespace Dex.Web
             app.UseRouting();
 
             app.UseAuthorization();
+            app.UseAuthentication();
 
             app.UseMvc(routes =>
             {

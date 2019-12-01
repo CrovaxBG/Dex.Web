@@ -1,5 +1,7 @@
 ﻿@using Dex.Common.Resources
 @using Dex.Common.Utils
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
 
 <!DOCTYPE html>
 <html lang="en">
@@ -19,6 +21,7 @@
 <body>
     <partial name="_BusyIndicatorPartial" />
     <header>
+
         <nav id="navbar" class="nav border-bottom navbar-light navbar-toggleable-sm navbar navbar-expand-sm nav-bar">
             <div id="signup" class="first-child">
                 <a class="nav-link" asp-area="">EN</a>
@@ -53,12 +56,26 @@
                     </li>
                 </ul>
             </div>
-            <div id="signup" class="last-child">
-                <a class="nav-link" asp-page="/Identity/SignUp">@ControlsResources.SignUp</a>
-            </div>
-            <div id="login" class="last-child">
-                <a class="nav-link" asp-page="/Identity/LogIn">@ControlsResources.Login</a>
-            </div>
+            @if (SignInManager.IsSignedIn(User))
+            {
+                <div id="signup" class="last-child">
+                    <a class="nav-link" asp-page="/Identity/MyAccountDefault">@ControlsResources.MyAccount</a>
+                </div>
+                <div id="login" class="last-child">
+                    <form method="post">
+                        <button type="submit" class="nav-link link" asp-page="/Identity/MyAccountDefault" asp-page-handler="LogOut">@ControlsResources.LogOut</button>
+                    </form>
+                </div>
+            }
+            else
+            {
+                <div id="signup" class="last-child">
+                    <a class="nav-link" asp-page="/Identity/SignUp">@ControlsResources.SignUp</a>
+                </div>
+                <div id="login" class="last-child">
+                    <a class="nav-link" asp-page="/Identity/LogIn">@ControlsResources.Login</a>
+                </div>
+            }
         </nav>
     </header>
     <div class="container">
