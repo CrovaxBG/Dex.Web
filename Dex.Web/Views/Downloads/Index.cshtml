@@ -1,0 +1,145 @@
+﻿@model Dex.Web.ViewModels.Downloads.DownloadsViewModel
+@{
+    Layout = "_Layout";
+    var searchCriteria = (string) TempData["searchCriteria"];
+    var currentPage = (int?) TempData["currentPage"];
+    currentPage ??= 1;
+}
+
+<div class="title text-center col-md-10" style=" margin: 0 auto;">
+    <h1>
+        Downloads
+        <br />
+        <div class="vl-center" style="height: 280px;"></div>
+    </h1>
+    <div class="d-inline-block">
+        <div class="float-left" style="width: 40%; ">
+            <h5>
+                Here you can find my most of my projects. You can check out their source code, by clicking on the github icon or directly download an executable.
+            </h5>
+            <br />
+            <br />
+            <h5>
+                You can search for a specific application using the search bar, filter apps by their tags and set favorites using the star icon.
+            </h5>
+        </div>
+
+        <div class="float-right" style="width: 40%;">
+            <h5>
+                Some of the apps are available for play directly through the web, scoreboards and matchmaking are cross-platform, meaning the desktop version can be paired with the web version.
+            </h5>
+            <br />
+            <br />
+            <h5>
+                The account used to log in into this website, is also shared between all applications with authentication.
+            </h5>
+        </div>
+    </div>
+</div>
+
+<br />
+
+<div class="float-right" style="margin-right: 45px;">
+    <input id="searchBar" class="form-control mr-sm-2" type="text" placeholder="Search project" aria-label="Search" value="@searchCriteria">
+    @*data-ajax="true" data-ajax-method="post" data-ajax-complete="completed"*@
+    @*<form method="post" class="form-inline mr-auto">
+
+        <button class="btn btn-outline-primary" type="submit" id="submitForm">Search</button>
+    </form>*@
+</div>
+<br />
+<br />
+
+<div id="projectsListDiv">
+</div>
+
+<div id="paginationListDiv" class="text-center">
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            var search = $('#searchBar').val();
+            var first = $.ajax({
+                url: '/Downloads/GetProjects',
+                method: 'GET',
+
+                accepts: 'text/json',
+                data: {
+                    pageNumber: '@currentPage',
+                    searchCriteria: search
+                },
+                headers: {
+                    RequestVerificationToken:
+                        $('input:hidden[name="__RequestVerificationToken"]').val()
+                }
+            });
+
+            first.done(function (data) {
+                appendProjectItems(data.items);
+                appendPaginationItems(@currentPage,data.maxPages);
+            });
+
+            $('#searchBar').on('input',
+                delay(function () {
+                    search = $('#searchBar').val();
+                    var searched = $.ajax({
+                        url: '/Downloads/GetProjects',
+                        method: 'GET',
+                        accepts: 'text/json',
+                        data: {
+                            pageNumber: '1',
+                            searchCriteria: search
+                        },
+                        headers: {
+                            RequestVerificationToken:
+                                $('input:hidden[name="__RequestVerificationToken"]').val()
+                        }
+                    });
+
+                    searched.done(function (data) {
+                        appendProjectItems(data.items);
+                        appendPaginationItems(1,data.maxPages);
+                    });
+                },100));
+
+            function appendProjectItems(data) {
+                var list = $('<ul id="projectsList" class="text-center p-0">');
+                $('#projectsListDiv').html(list);
+
+                $(data).each(function (e) {
+                    $.get('/Downloads/GetPartialProject', { json: JSON.stringify(data[e]) },
+                        function (response) {
+                            var htmlElement = '<li class="horizontal-li">' + response + '</li>';
+                            $('#projectsList').append(htmlElement);
+                        });
+                });
+            }
+
+            function appendPaginationItems(currentPage, totalPages) {
+                @{
+                    var previousPage = currentPage - 1;
+                    var nextPage = currentPage + 1;
+                }
+                var list = $('<ul id="paginationListDiv" class="pagination">');
+                var previousUrl = '@Url.Action("Index","Downloads")?pageNumber=' + '@previousPage';
+                list.append(
+                    '<li><a href="' + previousUrl + '">«</a></li>');
+                $('#paginationListDiv').html(list);
+                for (var i = 1; i <= totalPages; i++) {
+                    var url = '@Url.Action("Index","Downloads")?pageNumber=' + i;
+                    if (currentPage == i) {
+                        list.append('<li><a class="active" href="'+url+'"</a>'+i+'</li>');
+                    }
+                    else {
+                        list.append('<li><a href="'+url+'"</a>'+i+'</li>');
+                    }
+                }
+                var nextUrl = '@Url.Action("Index","Downloads")?pageNumber=' + '@nextPage';
+                list.append(
+                    '<li><a href="' + nextUrl + '">»</a></li>');
+                list.append('</ul>');
+            }
+        });
+    </script>
+}

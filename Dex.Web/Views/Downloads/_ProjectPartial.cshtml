@@ -1,4 +1,4 @@
-﻿@model Dex.Web.Pages.Downloads.ProjectBasicViewModel
+﻿@model Dex.Web.ViewModels.Downloads.ProjectBasicViewModel
 
 @{
     var pageUrl = $"/Downloads/{Model.ProjectName.Replace(" ",string.Empty)}";
@@ -25,7 +25,8 @@
         <hr />
         <p class="card-text">@Model.ProjectDescription</p>
         <br />
-        <a asp-page="@pageUrl">
+        
+        <a asp-page="@Url.Page("/Downloads/FluentGeneration")">
             <button class="btn btn-block btn-primary">See details</button>
         </a>
     </div>

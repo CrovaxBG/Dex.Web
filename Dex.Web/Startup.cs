@@ -119,13 +119,19 @@ namespace Dex.Web
                 routes.MapRoute(
                     name: "Default",
                     template: "{area=Home}/{page=Index}");
+
+
+                routes.MapRoute(
+                    name: "defaultControllers",
+                    template: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
             });
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{Area=Home}/{page=Index}");
+                    name: "defaultControllers",
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapRazorPages();
             });
         }
     }

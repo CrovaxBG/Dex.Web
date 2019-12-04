@@ -35,13 +35,13 @@
                         <a class="nav-bar-brand" asp-page="/Home/Index">@ControlsResources.Home</a>
                     </li>
                     <li>
-                        <a class="dropdown-toggle" asp-page="/Downloads/Index">@ControlsResources.Downloads</a>
+                        <a class="dropdown-toggle" asp-controller="Downloads" asp-action="Index">@ControlsResources.Downloads</a>
                         <ul>
                             <li><a href="#">Subnav Item 1</a></li>
                             <li><a href="#">Subnav Item 2</a></li>
                             <li><a href="#">Subnav Item 3</a></li>
                             <li>
-                                <a class="last-nav-item" asp-page="/Downloads/Index">@ControlsResources.ViewAll</a>
+                                <a class="last-nav-item" asp-controller="Downloads" asp-action="Index">@ControlsResources.ViewAll</a>
                             </li>
                         </ul>
                     </li>

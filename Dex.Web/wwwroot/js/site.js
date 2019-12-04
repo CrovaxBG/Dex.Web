@@ -4,7 +4,6 @@
             var windowBottom = $(this).scrollTop() + $(this).innerHeight();
             var index = 0;
             $(".fade").each(function () {
-                console.log(index);
                 var objectBottom = $(this).offset().top + $(this).outerHeight() - 50;
 
                 if (objectBottom < windowBottom) {
@@ -30,3 +29,30 @@ $(document).ready(function () {
             }
         });
 });
+
+$(document).ready(function () {
+    $('#submitForm').click(function (evt) {
+        evt.preventDefault();
+        var searchText = encodeURIComponent($('#searchBar').val());
+        $.ajax({
+            url: "/downloads/index?search=" + searchText + "&handler=SearchProject",
+            method: 'POST',
+            dataType: 'text',
+            headers: {
+                RequestVerificationToken:
+                    $('input:hidden[name="__RequestVerificationToken"]').val()
+            }
+        });
+    });
+});
+
+function delay(callback, ms) {
+    var timer = 0;
+    return function () {
+        var context = this, args = arguments;
+        clearTimeout(timer);
+        timer = setTimeout(function () {
+            callback.apply(context, args);
+        }, ms || 0);
+    };
+}
