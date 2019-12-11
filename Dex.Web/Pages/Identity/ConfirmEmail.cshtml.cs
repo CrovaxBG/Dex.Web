@@ -1,22 +1,22 @@
 using System.Text;
 using System.Threading.Tasks;
+using Dex.DataAccess.Models;
 using Dex.Infrastructure.Contracts.IServices;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Extensions.Logging;
 
 namespace Dex.Web.Pages.Identity
 {
     public class ConfirmEmailModel : PageModel
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<AspNetUsers> _userManager;
         private readonly ILoggerService _logger;
 
         public string StatusMessage { get; set; }
 
-        public ConfirmEmailModel(UserManager<IdentityUser> userManager, ILoggerService logger)
+        public ConfirmEmailModel(UserManager<AspNetUsers> userManager, ILoggerService logger)
         {
             _logger = logger;
             _userManager = userManager;

@@ -4,6 +4,7 @@ using AutoMapper;
 using Dex.Common.DTO;
 using Dex.DataAccess.Models;
 using Microsoft.AspNetCore.Mvc;
+using DexContext = Dex.DataAccess.Models.DexContext;
 
 namespace Dex.Infrastructure.Implementations.Controllers
 {
@@ -31,7 +32,7 @@ namespace Dex.Infrastructure.Implementations.Controllers
                     return NotFound();
                 }
 
-                return Ok(_context.Log.Select(_mapper.Map<Log>));
+                return Ok(_context.Log.Select(_mapper.Map<LogDTO>));
             }
             catch (Exception)
             {
@@ -54,7 +55,7 @@ namespace Dex.Infrastructure.Implementations.Controllers
                     return NotFound();
                 }
 
-                return Ok(_mapper.Map<Log>(log));
+                return Ok(_mapper.Map<LogDTO>(log));
             }
             catch (Exception)
             {

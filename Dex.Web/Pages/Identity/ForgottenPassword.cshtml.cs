@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Dex.Common.Resources;
 using Dex.Common.Utils;
+using Dex.DataAccess.Models;
 using Dex.Infrastructure.Contracts.IServices;
 using Dex.Web.Helpers;
 using Microsoft.AspNetCore.Identity;
@@ -18,7 +16,7 @@ namespace Dex.Web.Pages.Identity
 {
     public class ForgottenPasswordModel : PageModel
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<AspNetUsers> _userManager;
         private readonly IEmailService _emailService;
 
         [BindProperty]
@@ -27,7 +25,7 @@ namespace Dex.Web.Pages.Identity
         [Display(ResourceType = typeof(IdentityResources), Name = nameof(IdentityResources.Email))]
         public string Email { get; set; }
 
-        public ForgottenPasswordModel(UserManager<IdentityUser> userManager, IEmailService emailService)
+        public ForgottenPasswordModel(UserManager<AspNetUsers> userManager, IEmailService emailService)
         {
             _userManager = userManager;
             _emailService = emailService;

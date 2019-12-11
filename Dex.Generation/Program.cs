@@ -3,16 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Dex.Common.DTO;
-using Dex.Common.Extensions;
-using Dex.DataAccess.Models;
 using FluentGeneration;
 using FluentGeneration.Extensions;
 using FluentGeneration.Interfaces.Class;
-using FluentGeneration.Interfaces.Field;
-using FluentGeneration.Interfaces.Interface;
 using FluentGeneration.Interfaces.Property;
 using FluentGeneration.Shared;
+using DexContext = Dex.DataAccess.Models.DexContext;
 
 namespace Dex.Generation
 {

@@ -1,4 +1,7 @@
+using System.Linq;
 using System.Threading.Tasks;
+using Dex.Common.DTO;
+using Dex.DataAccess.Models;
 using Dex.Infrastructure.Contracts.IServices;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -8,17 +11,17 @@ namespace Dex.Web.Pages.Home
 {
     public class IndexModel : PageModel
     {
-        private readonly SignInManager<IdentityUser> _signInManager;
+        //private readonly SignInManager<AspNetUsers> _signInManager;
 
-        public IndexModel(SignInManager<IdentityUser> signInManager)
-        {
-            _signInManager = signInManager;
-        }
+        //public IndexModel(SignInManager<AspNetUsers> signInManager)
+        //{
+        //    _signInManager = signInManager;
+        //}
 
-        public async Task<IActionResult> OnGet()
-        {
-            //await _signInManager.PasswordSignInAsync("CrovaxBG", "1", true, false);
-            return Page();
-        }
+        //public async Task<IActionResult> OnGet()
+        //{
+        //    //await _signInManager.PasswordSignInAsync("CrovaxBG", "1", true, false);
+        //    return Page();
+        //}
     }
 }

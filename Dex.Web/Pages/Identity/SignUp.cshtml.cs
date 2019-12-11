@@ -1,28 +1,24 @@
-using System;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
-using Dex.Common.Utils;
+using Dex.DataAccess.Models;
 using Dex.Infrastructure.Contracts.IServices;
 using Dex.Web.Helpers;
 using Dex.Web.ViewModels.Identity;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Extensions.Logging;
 
 namespace Dex.Web.Pages.Identity
 {
     [BindProperties]
     public class SignUpModel : PageModel
     {
-        private readonly SignInManager<IdentityUser> _signInManager;
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly SignInManager<AspNetUsers> _signInManager;
+        private readonly UserManager<AspNetUsers> _userManager;
         private readonly ILoggerService _logger;
         private readonly IEmailSender _emailService;
 
@@ -31,8 +27,8 @@ namespace Dex.Web.Pages.Identity
         public string ReturnUrl { get; set; }
 
         public SignUpModel(
-            UserManager<IdentityUser> userManager,
-            SignInManager<IdentityUser> signInManager,
+            UserManager<AspNetUsers> userManager,
+            SignInManager<AspNetUsers> signInManager,
             ILoggerService logger,
             IEmailService emailService)
         {
@@ -55,11 +51,14 @@ namespace Dex.Web.Pages.Identity
             returnUrl ??= Url.Content("~/");
             if (ModelState.IsValid)
             {
-                var user = new IdentityUser { UserName = ViewModel.Username, Email = ViewModel.Email };
+                var user = new AspNetUsers { UserName = ViewModel.Username, Email = ViewModel.Email };
                 var result = await _userManager.CreateAsync(user, ViewModel.Password);
+
                 if (result.Succeeded)
                 {
                     await _logger.Log("User created a new account with password.");
+
+                    await _userManager.AddClaimsAsync(user, new[] {new Claim(ClaimTypes.Role, "User")});
 
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));

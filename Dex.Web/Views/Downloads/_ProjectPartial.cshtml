@@ -1,23 +1,34 @@
-﻿@model Dex.Web.ViewModels.Downloads.ProjectBasicViewModel
+﻿@model Dex.Web.ViewModels.Downloads.ProjectViewModel
 
 @{
-    var pageUrl = $"/Downloads/{Model.ProjectName.Replace(" ",string.Empty)}";
+    var pageUrl = $"/Downloads/{Model.ProjectName.Replace(" ", string.Empty)}";
 }
+
 <div class="card">
     <div class="card-body">
         <h5 class="card-title">
             @Model.ProjectName
+            <div class="float-left">
+                @if (Model.IsFavorite)
+                {
+                    <span class="favoriteStar project-@Model.Id fa fa-star checked"></span>
+                }
+                else
+                {
+                    <span class="favoriteStar project-@Model.Id fa fa-star unchecked"></span>
+                }
+            </div>
             <div class="float-right">
-                @if (!string.IsNullOrEmpty(Model.ProjectRepositoryIconUrl))
+                @if (!string.IsNullOrEmpty(Model.ProjectRepositoryLink))
                 {
                     <a href="@Model.ProjectRepositoryLink" class="text-decoration-none">
-                        <img src="@Url.Content(Model.ProjectRepositoryIconUrl)" alt="repo" width="30" height="30" class="btn-3"/>
+                        <img src="~/images/exe_icon.png" alt="repo" width="30" height="30" class="btn-light-hover" />
                     </a>
                 }
-                @if (!string.IsNullOrEmpty(Model.ProjectExecutableIconUrl))
+                @if (!string.IsNullOrEmpty(Model.ProjectExecutableName))
                 {
                     <a asp-page="/Downloads/FluentGeneration" asp-page-handler="DownloadExecutable" asp-route-zipName="@Model.ProjectExecutableName" class="text-decoration-none">
-                        <img src="@Url.Content(Model.ProjectExecutableIconUrl)" alt="exe" width="30" height="30"/>
+                        <img src="~/images/github_repo_icon.png" alt="exe" width="30" height="30" />
                     </a>
                 }
             </div>
@@ -25,7 +36,7 @@
         <hr />
         <p class="card-text">@Model.ProjectDescription</p>
         <br />
-        
+
         <a asp-page="@Url.Page("/Downloads/FluentGeneration")">
             <button class="btn btn-block btn-primary">See details</button>
         </a>

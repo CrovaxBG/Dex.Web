@@ -1,62 +1,31 @@
 ﻿@page
+@using Dex.Common.Resources
+@using Dex.Web.Controllers
+@using Dex.Web.Helpers
 @model Dex.Web.Pages.Home.IndexModel
 
-<div class="text-center title ">
-    <h1 class="display-4 fade">Welcome</h1>
-    <h1 class="display-4 fade">Welcome</h1>
-    <h1 class="display-4 fade">Welcome</h1>
-    <h1 class="display-4 fade">Welcome</h1>
-    <h1 class="display-4 fade">Welcome</h1>
-    <h1 class="display-4 fade">Welcome</h1>
-    <h1 class="display-4 fade">Welcome</h1>
-    <h1 class="display-4 fade">Welcome</h1>
-    <h1 class="display-4 fade">Welcome</h1>
-    <h1 class="display-4 fade">Welcome</h1>
-    <h1 class="display-4 fade">Welcome</h1>
-    <h1 class="display-4 fade">Welcome</h1>
-    <h1 class="display-4 fade">Welcome</h1>
-    <h1 class="display-4 fade">Welcome</h1>
-    <h1 class="display-4 fade">Welcome</h1>
-    <h1 class="display-4 fade">Welcome</h1>
-    <h1 class="display-4 fade">Welcome</h1>
-    <h1 class="display-4 fade">Welcome</h1>
-    <h1 class="display-4 fade">Welcome</h1>
-    <h1 class="display-4 fade">Welcome</h1>
-    <h1 class="display-4 fade">Welcome</h1>
-    <h1 class="display-4 fade">Welcome</h1>
-    <h1 class="display-4 fade">Welcome</h1>
-    <h1 class="display-4 fade">Welcome</h1>
-    <h1 class="display-4 fade">Welcome</h1>
-    <h1 class="display-4 fade">Welcome</h1>
-    <h1 class="display-4 fade">Welcome</h1>
-    <h1 class="display-4 fade">Welcome</h1>
-    <h1 class="display-4 fade">Welcome</h1>
-    <h1 class="display-4 fade">Welcome</h1>
-    <h1 class="display-4 fade">Welcome</h1>
-    <h1 class="display-4 fade">Welcome</h1>
-    <h1 class="display-4 fade">Welcome</h1>
-    <h1 class="display-4 fade">Welcome</h1>
-    <h1 class="display-4 fade">Welcome</h1>
-    <h1 class="display-4 fade">Welcome</h1>
-    <h1 class="display-4 fade">Welcome</h1>
-    <h1 class="display-4 fade">Welcome</h1>
-    <h1 class="display-4 fade">Welcome</h1>
-    <h1 class="display-4 fade">Welcome</h1>
-    <h1 class="display-4 fade">Welcome</h1>
-    <h1 class="display-4 fade">Welcome</h1>
-    <h1 class="display-4 fade">Welcome</h1>
-    <h1 class="display-4 fade">Welcome</h1>
-    <h1 class="display-4 fade">Welcome</h1>
-    <h1 class="display-4 fade">Welcome</h1>
-    <h1 class="display-4 fade">Welcome</h1>
-    <h1 class="display-4 fade">Welcome</h1>
-    <h1 class="display-4 fade">Welcome</h1>
-    <h1 class="display-4 fade">Welcome</h1>
-    <h1 class="display-4 fade">Welcome</h1>
-    <h1 class="display-4 fade">Welcome</h1>
-    <h1 class="display-4 fade">Welcome</h1>
-    <h1 class="display-4 fade">Welcome</h1>
-    <h1 class="display-4 fade">Welcome</h1>
-    <h1 class="display-4 fade">Welcome</h1>
-    <h1 class="display-4 fade">Welcome</h1>
+
+<div class="text-center fade title">
+    <h1 class="display-4">@HomePageResources.StringMainTitle</h1>
+</div>
+
+<div class="text-center fade">
+    <h3>@HomePageResources.StringSubTitle</h3>
+</div>
+<div>
+    <div class="fade standard-paragraph">
+        <a>
+
+        </a>
+        @Html.ResourceBasedPageLink(HomePageResources.StringParagraphOne, HomePageResources.StringParagraphOneActionLinkText, "/Identity/SignUp", null)
+    </div>
+    <div class="fade standard-paragraph">
+        @Html.ResourceBasedPageLink(HomePageResources.StringParagraphTwo, HomePageResources.StringParagraphTwoActionLinkText, "/Blog/Index", null)
+    </div>
+    <div class="fade standard-paragraph">
+        @Html.ResourceBasedActionLink(HomePageResources.StringParagraphThree, HomePageResources.StringParagraphThreeActionLinkText, nameof(DownloadsController.Index), "Downloads", null)
+    </div>
+    <div class="fade standard-paragraph">
+        @Html.ResourceBasedPageLink(HomePageResources.StringParagraphFour, HomePageResources.StringParagraphFourActionLinkText, "/Home/About", null)
+    </div>
 </div>

@@ -2,23 +2,27 @@
     $(window).on("load", function () {
         $(window).scroll(function () {
             var windowBottom = $(this).scrollTop() + $(this).innerHeight();
-            var index = 0;
             $(".fade").each(function () {
                 var objectBottom = $(this).offset().top + $(this).outerHeight() - 50;
 
                 if (objectBottom < windowBottom) {
                     if ($(this).css("opacity") == 0) { $(this).fadeTo(750, 1); }
                 }
-                index++;
             });
         }).scroll();
     });
 });
 
+$(document).ready(function () {
+    delay(
+        $("#projectsListDiv li").each(function (i) {
+        $(this).delay(100 * i).fadeIn(5000);
+    }),1000);
+});
+
 function displayBusyIndicator() {
     $('.loading').show();
 }
-
 
 $(document).ready(function () {
     $(document).on('submit', 'form',
@@ -30,22 +34,6 @@ $(document).ready(function () {
         });
 });
 
-$(document).ready(function () {
-    $('#submitForm').click(function (evt) {
-        evt.preventDefault();
-        var searchText = encodeURIComponent($('#searchBar').val());
-        $.ajax({
-            url: "/downloads/index?search=" + searchText + "&handler=SearchProject",
-            method: 'POST',
-            dataType: 'text',
-            headers: {
-                RequestVerificationToken:
-                    $('input:hidden[name="__RequestVerificationToken"]').val()
-            }
-        });
-    });
-});
-
 function delay(callback, ms) {
     var timer = 0;
     return function () {
@@ -55,4 +43,8 @@ function delay(callback, ms) {
             callback.apply(context, args);
         }, ms || 0);
     };
+}
+
+function hasClass(elem, className) {
+    return elem.className.split(' ').indexOf(className) > -1;
 }

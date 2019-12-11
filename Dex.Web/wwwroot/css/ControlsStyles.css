@@ -246,13 +246,9 @@ nav button:hover {
     text-decoration: none;
 }
 @import url(https://fonts.googleapis.com/css?family=Roboto:400,100,900);
-$red: #E1332D;
- $white: #fff;
 
-
-
-.btn-3 {
-    background: lighten($red, 3%);  
+.btn-light-hover {
+    background: lighten($red, 3%);
     border: 1px solid darken($red, 4%);
     box-shadow: 0px 2px 0 darken($red, 5%), 2px 4px 6px darken($red, 2%);
     font-weight: 900;
@@ -260,12 +256,166 @@ $red: #E1332D;
     transition: all 150ms linear;
 }
 
-.btn-3:hover {
+.btn-light-hover:hover {
     background: darken($red, 1.5%);
     border: 1px solid rgba(#000, .05);
     box-shadow: 1px 1px 2px rgba(#fff, .2);
-    color: lighten($red, 18%); 
+    color: lighten($red, 18%);
     text-decoration: none;
     text-shadow: -1px -1px 0 darken($red, 9.5%);
     transition: all 250ms linear;
+}
+
+.box {
+    animation: slide-up 1s ease;
+}
+
+@keyframes slide-up {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.checked {
+    color: orange;
+}
+
+.unchecked {
+    color: black;
+}
+
+.unselected-arrow {
+    color: black !important;
+    text-decoration: none !important;
+}
+
+.selected-arrow {
+    color: #1b6ec2 !important;
+    text-decoration: none !important;
+}
+
+@keyframes bounceIn {
+    from,
+    20%,
+    40%,
+    60%,
+    80%,
+    to {
+        -webkit-animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+        animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+    }
+
+    0% {
+        opacity: 0;
+        -webkit-transform: scale3d(0.3, 0.3, 0.3);
+        transform: scale3d(0.3, 0.3, 0.3);
+    }
+
+    20% {
+        -webkit-transform: scale3d(1.1, 1.1, 1.1);
+        transform: scale3d(1.1, 1.1, 1.1);
+    }
+
+    40% {
+        -webkit-transform: scale3d(0.9, 0.9, 0.9);
+        transform: scale3d(0.9, 0.9, 0.9);
+    }
+
+    60% {
+        opacity: 1;
+        -webkit-transform: scale3d(1.03, 1.03, 1.03);
+        transform: scale3d(1.03, 1.03, 1.03);
+    }
+
+    80% {
+        -webkit-transform: scale3d(0.97, 0.97, 0.97);
+        transform: scale3d(0.97, 0.97, 0.97);
+    }
+
+    to {
+        opacity: 1;
+        -webkit-transform: scale3d(1, 1, 1);
+        transform: scale3d(1, 1, 1);
+    }
+}
+
+.bounceIn {
+    -webkit-animation-duration: 0.75s;
+    animation-duration: 0.75s;
+    -webkit-animation-name: bounceIn;
+    animation-name: bounceIn;
+}
+
+.mainmenu {
+    display: inline-block;
+}
+
+.mainmenu ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: inline-block;
+}
+
+.mainmenu ul li {
+    display: inline-block;
+    position: relative;
+}
+
+.mainmenu ul li a {
+    display: block;
+    color: #222;
+    font-weight: 700;
+    font-size: 14px;
+    text-transform: uppercase;
+    padding: 10px 20px;
+    transition: .3s;
+    -webkit-transition: all 0.3s ease 0s;
+}
+
+.mainmenu ul li:hover > a:before, .mainmenu ul li.active > a:before {
+    opacity: 1;
+    visibility: visible;
+}
+    .mainmenu ul li:hover > a, .mainmenu ul li.active > a {
+        background: #f4f4f4;
+        text-decoration: none;
+        color: #1b6ec2;
+    }
+
+.mainmenu li ul {
+    background: #fff none repeat scroll 0 0;
+    left: 0;
+    opacity: 0;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+    position: absolute;
+    text-align: left;
+    -webkit-transition: all 0.3s ease 0s;
+    transition: all 0.3s ease 0s;
+    visibility: hidden;
+    width: 100%;
+    z-index: -1;
+}
+.mainmenu li ul li {
+    text-align: center;
+    display: block;
+}
+.mainmenu li ul li a {
+    padding-bottom: 5px;
+    padding-top: 5px;
+    text-transform: none;
+}
+.mainmenu li:hover ul {
+    border: 1px solid lightgrey;
+    border-top: none;
+    opacity: 1;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
+    visibility: visible;
+    z-index: 99;
 }

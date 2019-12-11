@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Dex.Common.Utils;
+﻿using Dex.Common.Utils;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Dex.Web.Helpers

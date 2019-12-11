@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Dex.DataAccess.Models;
 using Dex.Infrastructure.Contracts.IServices;
 using Dex.Web.Helpers;
 using Dex.Web.ViewModels.Identity;
@@ -11,8 +12,8 @@ namespace Dex.Web.Pages.Identity
     [BindProperties]
     public class LogInModel : PageModel
     {
-        private readonly SignInManager<IdentityUser> _signInManager;
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly SignInManager<AspNetUsers> _signInManager;
+        private readonly UserManager<AspNetUsers> _userManager;
         private readonly ILoggerService _loggerService;
 
         public LogInViewModel ViewModel { get; set; }
@@ -20,8 +21,8 @@ namespace Dex.Web.Pages.Identity
         public string ReturnUrl { get; set; }
 
         public LogInModel(
-            SignInManager<IdentityUser> signInManager,
-            UserManager<IdentityUser> userManager,
+            SignInManager<AspNetUsers> signInManager,
+            UserManager<AspNetUsers> userManager,
             ILoggerService loggerService)
         {
             _signInManager = signInManager;

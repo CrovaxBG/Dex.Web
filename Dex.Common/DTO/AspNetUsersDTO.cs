@@ -121,5 +121,11 @@ namespace Dex.Common.DTO
             get;
             set;
         }
+
+        public ICollection<ProjectFavoritesDTO> ProjectFavorites
+        {
+            get;
+            set;
+        }
     }
 }

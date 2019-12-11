@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Dex.Common.Utils;
+using Dex.DataAccess.Models;
 using Dex.Infrastructure.Contracts.IServices;
 using Dex.Web.Helpers;
 using Microsoft.AspNetCore.Identity;
@@ -17,7 +15,7 @@ namespace Dex.Web.Pages.Identity
 {
     public class _ResendConfirmationEmailModel : PageModel
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<AspNetUsers> _userManager;
         private readonly IEmailService _emailService;
 
         [Required]
@@ -25,7 +23,7 @@ namespace Dex.Web.Pages.Identity
         [BindProperty]
         public string Email { get; set; }
 
-        public _ResendConfirmationEmailModel(UserManager<IdentityUser> userManager, IEmailService emailService)
+        public _ResendConfirmationEmailModel(UserManager<AspNetUsers> userManager, IEmailService emailService)
         {
             _userManager = userManager;
             _emailService = emailService;

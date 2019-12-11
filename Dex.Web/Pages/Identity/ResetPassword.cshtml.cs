@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Text;
 using System.Threading.Tasks;
 using Dex.Common.Utils;
+using Dex.DataAccess.Models;
 using Dex.Web.Helpers;
 using Dex.Web.ViewModels.Identity;
 using Microsoft.AspNetCore.Identity;
@@ -15,12 +13,12 @@ namespace Dex.Web.Pages.Identity
 {
     public class ResetPasswordModel : PageModel
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<AspNetUsers> _userManager;
 
         [BindProperty]
         public ResetPasswordViewModel ViewModel { get; set; }
 
-        public ResetPasswordModel(UserManager<IdentityUser> userManager)
+        public ResetPasswordModel(UserManager<AspNetUsers> userManager)
         {
             _userManager = userManager;
         }

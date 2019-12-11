@@ -18,6 +18,11 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>ControlsResources.resx</DependentUpon>
     </Compile>
+    <Compile Update="Resources\HomePageResources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>HomePageResources.resx</DependentUpon>
+    </Compile>
     <Compile Update="Resources\IdentityResources.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -29,6 +34,10 @@
     <EmbeddedResource Update="Resources\ControlsResources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>ControlsResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\HomePageResources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>HomePageResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Update="Resources\IdentityResources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>

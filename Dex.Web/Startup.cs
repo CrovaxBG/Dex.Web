@@ -1,25 +1,24 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Security.Claims;
-using System.Threading.Tasks;
 using AutoMapper;
 using Dex.DataAccess.Models;
 using Dex.Infrastructure.Contracts.IServices;
 using Dex.Infrastructure.Implementations.Services;
-using Dex.Infrastructure.Mapping;
+using Dex.Web.MappingConfiguration;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query.Internal;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using DexContext = Dex.DataAccess.Models.DexContext;
 
 namespace Dex.Web
 {
@@ -38,27 +37,21 @@ namespace Dex.Web
         {
             ConnectionString = Configuration.GetSection("ConnectionStrings:DefaultConnection").Value;
 
-            services.AddAuthorization(options =>
-            {
-                options.AddPolicy("User", policy => policy.RequireRole("User"));
-                options.AddPolicy("Admin", policy => policy.RequireClaim(ClaimTypes.Role, "Admin"));
-            });
-
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
-            services.AddMvc().AddMvcOptions(options => options.EnableEndpointRouting = false);
             services.AddRazorPages();
             services.AddMvc().AddRazorPagesOptions(options =>
             {
                 options.Conventions.AddPageRoute("/Home/Index", "");
 
-            }).SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+            }).SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
+                .AddMvcOptions(options => options.EnableEndpointRouting = false);
 
             services.AddDbContext<DexContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
             services.AddScoped(provider => new DexContext(ConnectionString));
 
-            services.AddIdentity<IdentityUser, IdentityRole>(options =>
+            services.AddIdentity<AspNetUsers, AspNetRoles>(options =>
                 {
                     options.User.RequireUniqueEmail = true;
                     options.SignIn.RequireConfirmedAccount = true;
@@ -83,6 +76,7 @@ namespace Dex.Web
             var mappingConfig = new MapperConfiguration(mc =>
             {
                 mc.AddProfile<EntityProfile>();
+                mc.AddProfile<ViewModelProfile>();
             });
             
             var mapper = mappingConfig.CreateMapper();
@@ -90,6 +84,20 @@ namespace Dex.Web
 
             services.AddTransient<IEmailService, EmailService>();
             services.AddTransient<ILoggerService, LoggerService>();
+            services.AddTransient<IProjectsService, ProjectsService>();
+            services.AddTransient<IProjectFavoritesService, ProjectFavoritesService>();
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("User", policy =>
+                {
+                    policy.RequireAuthenticatedUser();
+                });
+                options.AddPolicy("Admin", policy =>
+                {
+                    policy.RequireClaim(ClaimTypes.Role,"Admin");
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -111,8 +119,8 @@ namespace Dex.Web
 
             app.UseRouting();
 
-            app.UseAuthorization();
             app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseMvc(routes =>
             {

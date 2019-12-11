@@ -3,10 +3,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
+using Dex.Common.DTO;
 using Dex.DataAccess.Models;
+using Dex.Infrastructure.Contracts.IServices;
 using Dex.Web.ViewModels.Downloads;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json;
 
 namespace Dex.Web.Controllers
@@ -16,32 +20,27 @@ namespace Dex.Web.Controllers
         private const int ItemsPerPage = 10;
 
         private readonly DexContext _context;
+        private readonly IMapper _mapper;
+        private readonly IProjectsService _projectsService;
+        private readonly IProjectFavoritesService _projectFavoritesService;
+        private readonly UserManager<AspNetUsers> _userManager;
 
-        //TODO move to database
-        private List<ProjectBasicViewModel> AllProjects;
+        private readonly PagingHandler _pagingHandler;
 
-        public DownloadsController(DexContext context)
+        public DownloadsController(
+            DexContext context,
+            IProjectsService projectsService,
+            IProjectFavoritesService projectFavoritesService,
+            UserManager<AspNetUsers> userManager,
+            IMapper mapper)
         {
             _context = context;
-            Mock();
-        }
-
-        private void Mock()
-        {
-            AllProjects = new List<ProjectBasicViewModel>();
-            for (int i = 0; i < 20; i++)
-            {
-                AllProjects.Add(new ProjectBasicViewModel
-                {
-                    ProjectName = $"Fluent Generation #{i}",
-                    ProjectDescription =
-                        "Simple library for code generation in .net core. Intended purpose is replacing T4 templates.",
-                    ProjectRepositoryLink = "https://github.com/CrovaxBG/FluentGeneration",
-                    ProjectExecutableName = "FluentGeneration",
-                    ProjectExecutableIconUrl = i % 4 == 0 ? "~/images/exe_icon.png" : string.Empty,
-                    ProjectRepositoryIconUrl = i % 7 == 0 ? "~/images/github_repo_icon.png" : string.Empty,
-                });
-            }
+            _mapper = mapper;
+            _projectsService = projectsService;
+            _projectFavoritesService = projectFavoritesService;
+            _userManager = userManager;
+            _pagingHandler = new SearchHandler();
+            _pagingHandler.SetNext(new SortHandler());
         }
 
         [HttpGet]
@@ -52,48 +51,218 @@ namespace Dex.Web.Controllers
         }
 
         [HttpGet]
-        public JsonResult GetProjects(int pageNumber, string searchCriteria)
+        public async Task<JsonResult> GetProjects(PagingData data)
         {
-            Debug.WriteLine("search: " + searchCriteria);
-            TempData["currentPage"] = pageNumber;
-            TempData["searchCriteria"] = searchCriteria;
-
-            if (string.IsNullOrEmpty(searchCriteria))
+            TempData["searchCriteria"] = data.SearchCriteria; //keep search after refresh in ui
+            var currentUser = await GetCurrentUserAsync();
+            var userFavorites = await _projectFavoritesService.GetFavoritesByUser(currentUser?.Id);
+            var allProjects = (await _projectsService.GetProjects()).Select(p =>
             {
-                var projects = GetProjectsByPage(pageNumber);
-                return Json(new { items = projects, maxPages = GetMaxPages(_ => true) });
-            }
+                var vm = _mapper.Map<ProjectsDTO, ProjectViewModel>(p);
+                vm.IsFavorite = currentUser != null && userFavorites.Any(f => f.ProjectId == p.Id);
 
-            var filteredProjects = GetFilteredProjectsByPage(pageNumber, Predicate);
-            return Json(new {items = filteredProjects, maxPages = GetMaxPages(Predicate) });
+                return vm;
+            });
 
-            bool Predicate(ProjectBasicViewModel p) => p.ProjectName.Contains(searchCriteria, StringComparison.OrdinalIgnoreCase);
+            var projects = _pagingHandler.Handle(allProjects, data);
+
+            var currentProjects = projects
+                .Skip(ItemsPerPage * (data.CurrentPage - 1))
+                .Take(ItemsPerPage);
+
+            return Json(new
+            {
+                items = currentProjects,
+                maxPages = GetMaxPages(projects),
+            });
         }
 
         [HttpGet]
         public IActionResult GetPartialProject(string json)
         {
-            return PartialView("_ProjectPartial", JsonConvert.DeserializeObject<ProjectBasicViewModel>(json));
+            return PartialView("_ProjectPartial", JsonConvert.DeserializeObject<ProjectViewModel>(json));
         }
 
-        private int GetMaxPages(Func<ProjectBasicViewModel, bool> searchCriteria)
+        [HttpGet]
+        public IActionResult GetPartialNoResults()
         {
-            return AllProjects == null ? 1 : (int) Math.Ceiling(AllProjects.Where(searchCriteria).Count() / (double) ItemsPerPage);
+            return PartialView("_NoResultsPartial");
         }
 
-        private List<ProjectBasicViewModel> GetProjectsByPage(int pageNumber)
+        [Authorize(Policy = "User")]
+        [HttpGet]
+        public async Task<IActionResult> SetFavoriteProject(int projectId)
         {
-            return new List<ProjectBasicViewModel>(AllProjects
-                .Skip(ItemsPerPage * (pageNumber - 1))
-                .Take(ItemsPerPage));
+            var currentUser = await GetCurrentUserAsync();
+            if (currentUser == null)
+            {
+                return Json(new {success = false});
+            }
+
+            await _projectFavoritesService.AddFavorite(new ProjectFavoritesDTO
+                {UserId = currentUser.Id, ProjectId = projectId});
+
+            return Json(new {success = true});
         }
 
-        private List<ProjectBasicViewModel> GetFilteredProjectsByPage(int pageNumber, Func<ProjectBasicViewModel, bool> predicate)
+        [Authorize(Policy = "User")]
+        [HttpGet]
+        public async Task<IActionResult> RemoveFavoriteProject(int projectId)
         {
-            return new List<ProjectBasicViewModel>(AllProjects
-                .Where(predicate)
-                .Skip(ItemsPerPage * (pageNumber - 1))
-                .Take(ItemsPerPage));
+            var currentUser = await GetCurrentUserAsync();
+            if (currentUser == null)
+            {
+                return Json(new {success = false});
+            }
+
+            await _projectFavoritesService.RemoveFavorite(new ProjectFavoritesDTO
+                {UserId = currentUser.Id, ProjectId = projectId});
+
+            return Json(new {success = true});
         }
+
+        private int GetMaxPages(IEnumerable<ProjectViewModel> source)
+        {
+            return source == null ? 1 : (int) Math.Ceiling(source.Count() / (double) ItemsPerPage);
+        }
+
+        private Task<AspNetUsers> GetCurrentUserAsync() => _userManager.GetUserAsync(HttpContext.User);
+    }
+
+    public interface IHandler<T>
+    {
+        IHandler<T> SetNext(IHandler<T> handler);
+
+        T Handle(T request, object additionalData);
+    }
+
+    public abstract class PagingHandler : IHandler<IEnumerable<ProjectViewModel>>
+    {
+        private IHandler<IEnumerable<ProjectViewModel>> _nextHandler;
+
+        public IHandler<IEnumerable<ProjectViewModel>> SetNext(
+            IHandler<IEnumerable<ProjectViewModel>> handler)
+        {
+            this._nextHandler = handler;
+            return handler;
+        }
+
+        public virtual IEnumerable<ProjectViewModel> Handle(IEnumerable<ProjectViewModel> request,
+            object additionalData)
+        {
+            if (_nextHandler == null)
+            {
+                return request;
+            }
+
+            return _nextHandler.Handle(request, additionalData);
+        }
+    }
+
+    public class SearchHandler : PagingHandler
+    {
+        public override IEnumerable<ProjectViewModel> Handle(IEnumerable<ProjectViewModel> request,
+            object additionalData)
+        {
+            if (additionalData is PagingData pagingData && !string.IsNullOrEmpty(pagingData.SearchCriteria))
+            {
+                return base.Handle(
+                    request.Where(p =>
+                        p.ProjectName.Contains(pagingData.SearchCriteria, StringComparison.OrdinalIgnoreCase)),
+                    additionalData);
+            }
+
+            return base.Handle(request, additionalData);
+        }
+    }
+
+    public class SortHandler : PagingHandler
+    {
+        public override IEnumerable<ProjectViewModel> Handle(IEnumerable<ProjectViewModel> request,
+            object additionalData)
+        {
+            if (additionalData is PagingData pagingData && !string.IsNullOrEmpty(pagingData.Sort))
+            {
+                return base.Handle(
+                    ProjectSortResolver.Resolve(pagingData.Sort).Sort(request, pagingData.IsAscending),
+                    additionalData);
+            }
+
+            return base.Handle(request, additionalData);
+        }
+    }
+
+    public static class ProjectSortResolver
+    {
+        private static readonly Dictionary<string, ISortStrategy<ProjectViewModel>> _sortStrategies;
+
+        static ProjectSortResolver()
+        {
+            _sortStrategies =
+                new Dictionary<string, ISortStrategy<ProjectViewModel>>(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["name"] = new ProjectNameSortStrategy(),
+                    ["date"] = new ProjectDateSortStrategy(),
+                    ["favorite"] = new ProjectFavoriteSortStrategy(),
+
+                };
+        }
+
+        public static ISortStrategy<ProjectViewModel> Resolve(string type)
+        {
+            return _sortStrategies.TryGetValue(type, out var strategy) ? strategy : null;
+        }
+    }
+
+    public interface ISortStrategy<T>
+    {
+        IEnumerable<T> Sort(IEnumerable<T> data, bool isAscending);
+    }
+
+    public class ProjectNameSortStrategy : ISortStrategy<ProjectViewModel>
+    {
+        public IEnumerable<ProjectViewModel> Sort(IEnumerable<ProjectViewModel> data, bool isAscending)
+        {
+            if (isAscending)
+            {
+                return data.OrderBy(p => p.ProjectName);
+            }
+
+            return data.OrderByDescending(p => p.ProjectName);
+        }
+    }
+
+    public class ProjectDateSortStrategy : ISortStrategy<ProjectViewModel>
+    {
+        public IEnumerable<ProjectViewModel> Sort(IEnumerable<ProjectViewModel> data, bool isAscending)
+        {
+            if (isAscending)
+            {
+                return data.OrderBy(p => p.ProjectDate);
+            }
+
+            return data.OrderByDescending(p => p.ProjectDate);
+        }
+    }
+
+    public class ProjectFavoriteSortStrategy : ISortStrategy<ProjectViewModel>
+    {
+        public IEnumerable<ProjectViewModel> Sort(IEnumerable<ProjectViewModel> data, bool isAscending)
+        {
+            if (isAscending)
+            {
+                return data.OrderBy(p => p.IsFavorite);
+            }
+
+            return data.OrderByDescending(p => p.IsFavorite);
+        }
+    }
+
+    public class PagingData
+    {
+        public int CurrentPage { get; set; }
+        public string SearchCriteria { get; set; }
+        public string Sort { get; set; }
+        public bool IsAscending { get; set; }
     }
 }
