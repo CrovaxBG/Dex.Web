@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Linq;
-using System.Linq.Expressions;
 using AutoMapper;
 using Dex.Common.DTO;
 using Dex.DataAccess.Models;
@@ -19,31 +17,30 @@ namespace Dex.Infrastructure.Implementations.Controllers
 
         public ProjectsController(DexContext context, IMapper mapper)
         {
-            _context = context;
-            _mapper = mapper;
+            _context = context ?? throw new ArgumentNullException(nameof(context));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         [HttpPost]
         [Route("AddProject")]
         public IActionResult AddProject(ProjectsDTO dto)
         {
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    var entity = _mapper.Map<Projects>(dto);
-                    _context.Projects.Add(entity);
-                    _context.SaveChanges();
+            if (dto == null || !ModelState.IsValid) { return BadRequest(); }
 
-                    if (entity.Id > 0)
-                    {
-                        return Ok(entity.Id);
-                    }
-                }
-                catch (Exception)
+            try
+            {
+                var entity = _mapper.Map<Projects>(dto);
+                _context.Projects.Add(entity);
+                _context.SaveChanges();
+
+                if (entity.Id > 0)
                 {
-                    return BadRequest();
+                    return Ok(entity.Id);
                 }
+            }
+            catch (Exception)
+            {
+                return BadRequest();
             }
 
             return BadRequest();
@@ -53,28 +50,25 @@ namespace Dex.Infrastructure.Implementations.Controllers
         [Route("ModifyProject")]
         public IActionResult ModifyProject(ProjectsDTO dto)
         {
-            if (ModelState.IsValid)
+            if (dto == null || !ModelState.IsValid) { return BadRequest(); }
+
+            try
             {
-                try
+                var entity = _context.Projects.FirstOrDefault(p => p.Id == dto.Id);
+                if (entity == null)
                 {
-                    var entity = _context.Projects.FirstOrDefault(p => p.Id == dto.Id);
-                    if (entity == null)
-                    {
-                        return NotFound();
-                    }
-
-                    _mapper.Map(dto, entity);
-                    _context.SaveChanges();
-
-                    return Ok(entity.Id);
+                    return NotFound();
                 }
-                catch (Exception)
-                {
-                    return BadRequest();
-                }
+
+                _mapper.Map(dto, entity);
+                _context.SaveChanges();
+
+                return Ok(entity.Id);
             }
-
-            return BadRequest();
+            catch (Exception)
+            {
+                return BadRequest();
+            }
         }
 
         [HttpDelete]
@@ -127,10 +121,6 @@ namespace Dex.Infrastructure.Implementations.Controllers
         [Route("GetProjects")]
         public IActionResult GetProjects()
         {
-            if (_context == null)
-            {
-                return NotFound();
-            }
             try
             {
                 return Ok(_context.Projects.Select(p => _mapper.Map<ProjectsDTO>(p)));

@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
 using Dex.Common.DTO;
 using Dex.DataAccess.Models;
-using Dex.Infrastructure.Contracts.IServices;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using DexContext = Dex.DataAccess.Models.DexContext;
 
@@ -21,42 +17,41 @@ namespace Dex.Infrastructure.Implementations.Controllers
 
         public ProjectFavoritesController(DexContext context, IMapper mapper)
         {
-            _context = context;
-            _mapper = mapper;
+            _context = context ?? throw new ArgumentNullException(nameof(context));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         [HttpPost]
         [Route("AddFavorite")]
         public IActionResult AddFavorite(ProjectFavoritesDTO dto)
         {
-            if (ModelState.IsValid)
+            if (dto == null || !ModelState.IsValid) { return BadRequest(); }
+
+            try
             {
-                try
-                {
-                    var entity = _mapper.Map<ProjectFavorites>(dto);
-                    _context.ProjectFavorites.Add(entity);
-                    _context.SaveChanges();
+                var entity = _mapper.Map<ProjectFavorites>(dto);
+                _context.ProjectFavorites.Add(entity);
+                _context.SaveChanges();
 
-                    return Ok();
-                }
-                catch (Exception)
-                {
-                    return BadRequest();
-                }
+                return Ok();
             }
-
-            return BadRequest();
+            catch (Exception)
+            {
+                return BadRequest();
+            }
         }
 
         [HttpDelete]
         [Route("RemoveFavorite")]
         public IActionResult RemoveFavorite(ProjectFavoritesDTO dto)
         {
-            if (dto == null) { return BadRequest(); }
+            if (dto == null || !ModelState.IsValid) { return BadRequest(); }
 
             try
             {
-                var entity = _context.ProjectFavorites.SingleOrDefault(p => p.ProjectId == dto.ProjectId && p.UserId == dto.UserId);
+                var entity =
+                    _context.ProjectFavorites.SingleOrDefault(p =>
+                        p.ProjectId == dto.ProjectId && p.UserId == dto.UserId);
                 if (entity == null)
                 {
                     return NotFound();
@@ -76,10 +71,7 @@ namespace Dex.Infrastructure.Implementations.Controllers
         [Route("GetFavoritesByUser")]
         public IActionResult GetFavoritesByUser(string userId)
         {
-            if (_context == null || userId == null)
-            {
-                return NotFound();
-            }
+            if (string.IsNullOrEmpty(userId)) { return BadRequest(); }
 
             try
             {
@@ -96,10 +88,7 @@ namespace Dex.Infrastructure.Implementations.Controllers
         [Route("GetFavoritesByProject")]
         public IActionResult GetFavoritesByProject(int? projectId)
         {
-            if (_context == null || projectId == null)
-            {
-                return NotFound();
-            }
+            if (projectId == null) { return BadRequest(); }
 
             try
             {

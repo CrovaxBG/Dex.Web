@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -19,7 +18,6 @@ namespace Dex.Web.Controllers
     {
         private const int ItemsPerPage = 10;
 
-        private readonly DexContext _context;
         private readonly IMapper _mapper;
         private readonly IProjectsService _projectsService;
         private readonly IProjectFavoritesService _projectFavoritesService;
@@ -28,13 +26,11 @@ namespace Dex.Web.Controllers
         private readonly PagingHandler _pagingHandler;
 
         public DownloadsController(
-            DexContext context,
             IProjectsService projectsService,
             IProjectFavoritesService projectFavoritesService,
             UserManager<AspNetUsers> userManager,
             IMapper mapper)
         {
-            _context = context;
             _mapper = mapper;
             _projectsService = projectsService;
             _projectFavoritesService = projectFavoritesService;
