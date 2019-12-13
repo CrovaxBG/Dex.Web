@@ -3,17 +3,16 @@ using System.Net;
 using System.Net.Mail;
 using System.Threading.Tasks;
 using Dex.Infrastructure.Contracts.IServices;
-using Microsoft.Extensions.Configuration;
 
 namespace Dex.Infrastructure.Implementations.Services
 {
     public class EmailService : IEmailService
     {
-        private readonly IConfiguration _configuration;
+        private readonly SmtpClient _smtpClient;
 
-        public EmailService(IConfiguration configuration)
+        public EmailService(SmtpClient smtpClient)
         {
-            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+            _smtpClient = smtpClient ?? throw new ArgumentNullException(nameof(smtpClient));
         }
 
         public Task SendEmailAsync(string email, string subject, string htmlMessage)
@@ -23,32 +22,17 @@ namespace Dex.Infrastructure.Implementations.Services
 
             return Task.Run(() =>
             {
-                using var client = BuildClient();
-                var message = BuildMessage(email, subject, htmlMessage);
-                client.Send(message);
+                var credentials = (NetworkCredential) _smtpClient.Credentials;
+                var message = BuildMessage(credentials.UserName, email, subject, htmlMessage);
+                _smtpClient.Send(message);
             });
         }
 
-        private SmtpClient BuildClient()
+        private MailMessage BuildMessage(string fromEmail, string toEmail, string subject, string htmlMessage)
         {
-            var email = _configuration.GetSection("Data").GetSection("Email").Value;
-            var password = _configuration.GetSection("Data").GetSection("Password").Value;
-
-            return new SmtpClient("smtp.gmail.com", 587)
-            {
-                UseDefaultCredentials = false,
-                Credentials = new NetworkCredential(email, password),
-                EnableSsl = true
-            };
-        }
-
-        private MailMessage BuildMessage(string toEmail, string subject, string htmlMessage)
-        {
-            var email = _configuration.GetSection("Data").GetSection("Email").Value;
-
             var mailMessage = new MailMessage
             {
-                From = new MailAddress(email),
+                From = new MailAddress(fromEmail),
                 Subject = subject,
                 IsBodyHtml = true,
                 Body = htmlMessage

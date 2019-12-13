@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Net;
+using System.Net.Mail;
 using System.Reflection;
 using System.Security.Claims;
 using AutoMapper;
@@ -88,6 +89,21 @@ namespace Dex.Web
             services.AddSingleton(mapper);
 
             services.AddTransient<IEmailService, EmailService>();
+
+            services.AddScoped<SmtpClient>(provider =>
+            {
+                var host = Configuration.GetValue<string>("Data:Smtp:Host");
+                var port = Configuration.GetValue<int>("Data:Smtp:Port");
+                var email = Configuration.GetValue<string>("Data:Smtp:Email");
+                var password = Configuration.GetValue<string>("Data:Smtp:Password");
+
+                return new SmtpClient(host, port)
+                {
+                    EnableSsl = true,
+                    UseDefaultCredentials = false,
+                    Credentials = new NetworkCredential(email, password)
+                };
+            });
 
             services.AddHttpClient<ILoggerService, LoggerService>(client =>
             {
