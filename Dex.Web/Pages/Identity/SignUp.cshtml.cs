@@ -38,12 +38,16 @@ namespace Dex.Web.Pages.Identity
             _emailService = emailService;
         }
 
-        public async Task OnGetAsync(string returnUrl = null)
+        public async Task<IActionResult> OnGetAsync(string returnUrl = null)
         {
-            //var user = await _userManager.FindByEmailAsync("denis_gls@abv.bg");
-            //var result = await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.Role, "Admin"));
-
             ReturnUrl = returnUrl;
+
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToPage("/Home/Index");
+            }
+
+            return Page();
         }
 
         public async Task<IActionResult> OnPost(string returnUrl = null)

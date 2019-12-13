@@ -30,6 +30,16 @@ namespace Dex.Web.Pages.Identity
             _loggerService = loggerService;
         }
 
+        public IActionResult OnGet()
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToPage("/Home/Index");
+            }
+
+            return Page();
+        }
+
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
             returnUrl ??= Url.Content("~/");
