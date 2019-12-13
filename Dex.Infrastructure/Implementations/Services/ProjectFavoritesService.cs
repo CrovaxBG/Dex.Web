@@ -6,63 +6,48 @@ using Dex.Common.DTO;
 using Dex.Common.Extensions;
 using Dex.Infrastructure.Contracts.IServices;
 using Dex.Infrastructure.Implementations.Controllers;
-using Microsoft.Extensions.Configuration;
 
 namespace Dex.Infrastructure.Implementations.Services
 {
     public class ProjectFavoritesService : IProjectFavoritesService
     {
-        private readonly string _host;
-        private const string ControllerAddress = "api/projectfavorites/";
+        private readonly HttpClient _client;
 
-        public ProjectFavoritesService(IConfiguration configuration)
+        public ProjectFavoritesService(HttpClient client)
         {
-            if (configuration == null) { throw new ArgumentNullException(nameof(configuration)); }
-
-            _host = configuration.GetSection("Data").GetSection("Host").Value;
+            _client = client ?? throw new ArgumentNullException(nameof(client));
         }
 
         public async Task AddFavorite(ProjectFavoritesDTO dto)
         {
-            using var client = new HttpClient { BaseAddress = new Uri(_host + ControllerAddress) };
-
-            await client.PostAsJsonAsync(nameof(ProjectFavoritesController.AddFavorite), dto);
+            await _client.PostAsJsonAsync(nameof(ProjectFavoritesController.AddFavorite), dto);
         }
 
         public async Task RemoveFavorite(ProjectFavoritesDTO dto)
         {
-            using var client = new HttpClient { BaseAddress = new Uri(_host + ControllerAddress) };
-
-            await client.DeleteAsJsonAsync(nameof(ProjectFavoritesController.RemoveFavorite), dto);
+            await _client.DeleteAsJsonAsync(nameof(ProjectFavoritesController.RemoveFavorite), dto);
         }
 
         public async Task<List<ProjectFavoritesDTO>> GetFavoritesByUser(string userId)
         {
-            using var client = new HttpClient { BaseAddress = new Uri(_host + ControllerAddress) };
-            var response = await client.GetAsync($"{nameof(ProjectFavoritesController.GetFavoritesByUser)}?userId={userId}");
-
+            var response = await _client.GetAsync($"{nameof(ProjectFavoritesController.GetFavoritesByUser)}?userId={userId}");
             if (response.IsSuccessStatusCode)
             {
                 var message = await response.Content.ReadAsJsonAsync<List<ProjectFavoritesDTO>>();
                 return message;
             }
-
-            return null;
+            return new List<ProjectFavoritesDTO>();
         }
 
         public async Task<List<ProjectFavoritesDTO>> GetFavoritesByProject(int projectId)
         {
-            using var client = new HttpClient { BaseAddress = new Uri(_host + ControllerAddress) };
-
-            var response = await client.GetAsync($"{nameof(ProjectFavoritesController.GetFavoritesByProject)}?projectId={projectId}");
-
+            var response = await _client.GetAsync($"{nameof(ProjectFavoritesController.GetFavoritesByProject)}?projectId={projectId}");
             if (response.IsSuccessStatusCode)
             {
                 var message = await response.Content.ReadAsJsonAsync<List<ProjectFavoritesDTO>>();
                 return message;
             }
-
-            return null;
+            return new List<ProjectFavoritesDTO>();
         }
     }
 }

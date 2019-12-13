@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Net;
 using System.Reflection;
@@ -36,6 +37,10 @@ namespace Dex.Web
         public void ConfigureServices(IServiceCollection services)
         {
             ConnectionString = Configuration.GetSection("ConnectionStrings:DefaultConnection").Value;
+            var host = Configuration.GetSection("Data").GetSection("Host").Value;
+            var projectsControllerBaseAddress = new Uri(host + "api/projects/");
+            var projectFavoritesControllerBaseAddress = new Uri(host + "api/projectfavorites/");
+            var loggerControllerBaseAddress = new Uri(host + "api/logger/");
 
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
             services.AddRazorPages();
@@ -83,9 +88,21 @@ namespace Dex.Web
             services.AddSingleton(mapper);
 
             services.AddTransient<IEmailService, EmailService>();
-            services.AddTransient<ILoggerService, LoggerService>();
-            services.AddTransient<IProjectsService, ProjectsService>();
-            services.AddTransient<IProjectFavoritesService, ProjectFavoritesService>();
+
+            services.AddHttpClient<ILoggerService, LoggerService>(client =>
+            {
+                client.BaseAddress = loggerControllerBaseAddress;
+            });
+
+            services.AddHttpClient<IProjectsService, ProjectsService>(client =>
+            {
+                client.BaseAddress = projectsControllerBaseAddress;
+            });
+
+            services.AddHttpClient<IProjectFavoritesService, ProjectFavoritesService>(client =>
+            {
+                client.BaseAddress = projectFavoritesControllerBaseAddress;
+            });
 
             services.AddAuthorization(options =>
             {

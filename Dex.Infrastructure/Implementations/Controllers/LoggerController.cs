@@ -17,8 +17,8 @@ namespace Dex.Infrastructure.Implementations.Controllers
 
         public LoggerController(DexContext context, IMapper mapper)
         {
-            _context = context;
-            _mapper = mapper;
+            _context = context ?? throw new ArgumentNullException(nameof(context));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(context));
         }
 
         [HttpGet]
@@ -27,11 +27,6 @@ namespace Dex.Infrastructure.Implementations.Controllers
         {
             try
             {
-                if (_context == null)
-                {
-                    return NotFound();
-                }
-
                 return Ok(_context.Log.Select(_mapper.Map<LogDTO>));
             }
             catch (Exception)
@@ -67,29 +62,24 @@ namespace Dex.Infrastructure.Implementations.Controllers
         [Route("AddLog")]
         public IActionResult AddLog(LogDTO log)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid) { return BadRequest(); }
+            try
             {
-                try
+                log.Date = DateTime.Now;
+                log.Id = 0;
+
+                var entity = _mapper.Map<Log>(log);
+                _context.Log.Add(entity);
+                _context.SaveChanges();
+
+                if (entity.Id > 0)
                 {
-                    log.Date = DateTime.Now;
-                    log.Id = 0;
-
-                    var entity = _mapper.Map<Log>(log);
-                    _context.Log.Add(entity);
-                    _context.SaveChanges();
-
-                    if (entity.Id > 0)
-                    {
-                        return Ok(entity.Id);
-                    }
-
-                    return NotFound();
+                    return Ok(entity.Id);
                 }
-                catch (Exception)
-                {
-                    return BadRequest();
-                }
-
+            }
+            catch (Exception)
+            {
+                return BadRequest();
             }
 
             return BadRequest();

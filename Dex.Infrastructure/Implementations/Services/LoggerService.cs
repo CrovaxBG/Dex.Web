@@ -5,26 +5,27 @@ using System.Threading.Tasks;
 using Dex.Common.DTO;
 using Dex.Common.Extensions;
 using Dex.Infrastructure.Contracts.IServices;
-using Microsoft.Extensions.Configuration;
+using Dex.Infrastructure.Implementations.Controllers;
 
 namespace Dex.Infrastructure.Implementations.Services
 {
     public class LoggerService : ILoggerService
     {
-        private readonly string _host;
+        private readonly HttpClient _client;
 
-        public LoggerService(IConfiguration configuration)
+        public LoggerService(HttpClient client)
         {
-            if(configuration == null) { throw new ArgumentNullException(nameof(configuration)); }
+            _client = client ?? throw new ArgumentNullException(nameof(client));
+        }
 
-            _host = configuration.GetSection("Data").GetSection("Host").Value;
+        public Task<int> Log(string message)
+        {
+            return Log(new LogDTO { Message = message });
         }
 
         public async Task<int> Log(LogDTO logData)
         {
-            using var client = new HttpClient {BaseAddress = new Uri(_host + "api/logger/")};
-
-            var response = await client.PostAsJsonAsync("AddLog", logData);
+            var response = await _client.PostAsJsonAsync(nameof(LoggerController.AddLog), logData);
 
             if (response.IsSuccessStatusCode)
             {
@@ -38,16 +39,9 @@ namespace Dex.Infrastructure.Implementations.Services
             return -1;
         }
 
-        public Task<int> Log(string message)
-        {
-            return Log(new LogDTO {Message = message});
-        }
-
         public async Task<LogDTO> GetLog(int id)
         {
-            using var client = new HttpClient { BaseAddress = new Uri(_host + "api/logger/") };
-
-            var response = await client.GetAsync($"GetLog?logId={id}");
+            var response = await _client.GetAsync($"{nameof(LoggerController.GetLog)}?logId={id}");
 
             if (response.IsSuccessStatusCode)
             {
@@ -60,9 +54,7 @@ namespace Dex.Infrastructure.Implementations.Services
 
         public async Task<List<LogDTO>> GetLogs()
         {
-            using var client = new HttpClient { BaseAddress = new Uri(_host + "api/logger/") };
-
-            var response = await client.GetAsync($"GetLogs");
+            var response = await _client.GetAsync(nameof(LoggerController.GetLogs));
 
             if (response.IsSuccessStatusCode)
             {
@@ -70,7 +62,7 @@ namespace Dex.Infrastructure.Implementations.Services
                 return message;
             }
 
-            return null;
+            return new List<LogDTO>();
         }
     }
 }

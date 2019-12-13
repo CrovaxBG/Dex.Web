@@ -5,27 +5,22 @@ using System.Threading.Tasks;
 using Dex.Common.DTO;
 using Dex.Common.Extensions;
 using Dex.Infrastructure.Contracts.IServices;
-using Microsoft.Extensions.Configuration;
+using Dex.Infrastructure.Implementations.Controllers;
 
 namespace Dex.Infrastructure.Implementations.Services
 {
     public class ProjectsService : IProjectsService
     {
-        private readonly string _host;
+        private readonly HttpClient _client;
 
-        public ProjectsService(IConfiguration configuration)
+        public ProjectsService(HttpClient client)
         {
-            if (configuration == null) { throw new ArgumentNullException(nameof(configuration)); }
-
-            _host = configuration.GetSection("Data").GetSection("Host").Value;
+            _client = client ?? throw new ArgumentNullException(nameof(client));
         }
 
         public async Task<int> AddProject(ProjectsDTO dto)
         {
-            using var client = new HttpClient { BaseAddress = new Uri(_host + "api/projects/") };
-
-            var response = await client.PostAsJsonAsync("AddProject", dto);
-
+            var response = await _client.PostAsJsonAsync(nameof(ProjectsController.AddProject), dto);
             if (response.IsSuccessStatusCode)
             {
                 var message = await response.Content.ReadAsStringAsync();
@@ -34,16 +29,12 @@ namespace Dex.Infrastructure.Implementations.Services
                     return id;
                 }
             }
-
             return -1;
         }
 
         public async Task<int> ModifyProject(ProjectsDTO dto)
         {
-            using var client = new HttpClient { BaseAddress = new Uri(_host + "api/projects/") };
-
-            var response = await client.PutAsJsonAsync("ModifyProject", dto);
-
+            var response = await _client.PutAsJsonAsync(nameof(ProjectsController.ModifyProject), dto);
             if (response.IsSuccessStatusCode)
             {
                 var message = await response.Content.ReadAsStringAsync();
@@ -52,45 +43,34 @@ namespace Dex.Infrastructure.Implementations.Services
                     return id;
                 }
             }
-
             return -1;
         }
 
         public async Task RemoveProject(int id)
         {
-            using var client = new HttpClient { BaseAddress = new Uri(_host + "api/projects/") };
-
-            await client.DeleteAsync($"RemoveProject?id={id}");
+            await _client.DeleteAsync($"{nameof(ProjectsController.RemoveProject)}?id={id}");
         }
 
         public async Task<ProjectsDTO> GetProject(int id)
         {
-            using var client = new HttpClient { BaseAddress = new Uri(_host + "api/projects/") };
-
-            var response = await client.GetAsync($"GetProject?id={id}");
-
+            var response = await _client.GetAsync($"{nameof(ProjectsController.GetProject)}?id={id}");
             if (response.IsSuccessStatusCode)
             {
                 var message = await response.Content.ReadAsJsonAsync<ProjectsDTO>();
                 return message;
             }
-
-            return null;
+            return null; //Should consider NullObject pattern
         }
 
         public async Task<List<ProjectsDTO>> GetProjects()
         {
-            using var client = new HttpClient { BaseAddress = new Uri(_host + "api/projects/") };
-
-            var response = await client.GetAsync($"GetProjects");
-
+            var response = await _client.GetAsync(nameof(ProjectsController.GetProjects));
             if (response.IsSuccessStatusCode)
             {
                 var message = await response.Content.ReadAsJsonAsync<List<ProjectsDTO>>();
                 return message;
             }
-
-            return null;
+            return new List<ProjectsDTO>();
         }
     }
 }
