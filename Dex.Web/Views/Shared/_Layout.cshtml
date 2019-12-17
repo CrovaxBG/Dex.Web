@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
     <link rel="stylesheet" href="~/css/ControlsStyles.css" />
+    <link rel="stylesheet" href="~/css/hover.css" />
     <link href="~/lib/jquery/dist/stylesheets/jquery.growl.css" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
@@ -60,11 +61,11 @@
             @if (SignInManager.IsSignedIn(User))
             {
                 <div id="signup" class="last-child">
-                    <a class="nav-link" asp-page="/Identity/MyAccountDefault">@ControlsResources.MyAccount</a>
+                    <a class="nav-link" asp-action="Index" asp-controller="Account">@ControlsResources.MyAccount</a>
                 </div>
                 <div id="login" class="last-child">
                     <form method="post">
-                        <button type="submit" class="nav-link link" asp-page="/Identity/MyAccountDefault" asp-page-handler="LogOut">@ControlsResources.LogOut</button>
+                        <button type="submit" class="nav-link link" asp-action="LogOut" asp-controller="Account">@ControlsResources.LogOut</button>
                     </form>
                 </div>
             }
@@ -96,6 +97,12 @@
     <script src="~/lib/jquery/dist/javascripts/jquery.growl.js" type="text/javascript"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+    <script>
+        [].forEach.call(document.getElementsByClassName('mvc-grid'),
+            function(element) {
+                new MvcGrid(element);
+            });
+    </script>
 @{
         if (!string.IsNullOrEmpty(TempData["RedirectMessage"] as string) && (TempData["RedirectMessageType"] is string type))
         {

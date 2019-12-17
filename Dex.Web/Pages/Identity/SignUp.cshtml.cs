@@ -62,7 +62,7 @@ namespace Dex.Web.Pages.Identity
                 {
                     await _logger.Log("User created a new account with password.");
 
-                    await _userManager.AddClaimsAsync(user, new[] {new Claim(ClaimTypes.Role, "User")});
+                    await _userManager.AddClaimsAsync(user, new[] {new Claim("Role", "User")});
 
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));

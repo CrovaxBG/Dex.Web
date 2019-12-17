@@ -33,4 +33,8 @@
     <None Include="wwwroot\images\github_repo_icon.png" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Pages\Account\" />
+  </ItemGroup>
+
 </Project>

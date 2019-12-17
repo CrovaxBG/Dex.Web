@@ -29,6 +29,7 @@ namespace Dex.Infrastructure.Implementations.Services
                     return id;
                 }
             }
+
             return -1;
         }
 
@@ -43,6 +44,7 @@ namespace Dex.Infrastructure.Implementations.Services
                     return id;
                 }
             }
+
             return -1;
         }
 
@@ -59,7 +61,8 @@ namespace Dex.Infrastructure.Implementations.Services
                 var message = await response.Content.ReadAsJsonAsync<ProjectsDTO>();
                 return message;
             }
-            return null; //Should consider NullObject pattern
+
+            return null;
         }
 
         public async Task<List<ProjectsDTO>> GetProjects()
@@ -70,6 +73,7 @@ namespace Dex.Infrastructure.Implementations.Services
                 var message = await response.Content.ReadAsJsonAsync<List<ProjectsDTO>>();
                 return message;
             }
+
             return new List<ProjectsDTO>();
         }
     }

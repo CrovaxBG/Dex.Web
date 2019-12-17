@@ -11,11 +11,11 @@
             <div class="float-left">
                 @if (Model.IsFavorite)
                 {
-                    <span class="favoriteStar project-@Model.Id fa fa-star checked"></span>
+                    <span class="favoriteStar project-@Model.Id fa fa-star clickable checked"></span>
                 }
                 else
                 {
-                    <span class="favoriteStar project-@Model.Id fa fa-star unchecked"></span>
+                    <span class="favoriteStar project-@Model.Id fa fa-star clickable unchecked"></span>
                 }
             </div>
             <div class="float-right">

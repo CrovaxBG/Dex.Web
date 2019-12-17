@@ -1,0 +1,233 @@
+﻿@using Dex.DataAccess.Models
+@using Dex.Web.ViewModels.Identity
+@using Microsoft.AspNetCore.Identity
+@model Dex.Web.ViewModels.Identity.AccountInformationViewModel
+@inject SignInManager<AspNetUsers> SignInManager
+
+<div class="vl"></div>
+<div class="title">
+    <h1>My Account</h1>
+    <hr />
+    <div class="col-md-4">
+        <h4>Basic details</h4>
+        <br />
+        <div class="form-group">
+            <div class="float-left d-inline-block">
+                <label asp-for="Username" class="col-form-label"></label>
+            </div>
+            <div class="float-right d-inline-block">
+                <input asp-for="Username" class="form-control" readonly="readonly" />
+            </div>
+            <span asp-validation-for="Username" class="text-danger"></span>
+        </div>
+        <br />
+        <br />
+        <div class="form-group">
+            <div class="float-left d-inline-block">
+                <label asp-for="Email" class="col-form-label"></label>
+            </div>
+            <div class="float-right d-inline-block">
+                <input asp-for="Email" class="form-control" readonly="readonly" />
+            </div>
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+
+        <br />
+        <br />
+
+        <div class="text-center card">
+            <label class="card-header" asp-for="Privileges"></label>
+            <br />
+            <div id="privilegesTableDiv"></div>
+
+            <br />
+
+            @if (User.HasClaim("AddRecord", "UserPrivilege") && Model.Privileges.FirstOrDefault() != null)
+            {
+                //you can only add claims that you already have, if list is empty, you cant add any claims
+                <partial name="_AddPrivilegePartial" model="Model.Privileges.FirstOrDefault()" />
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(document).ready(function() {
+            updatePrivilegesTable();
+
+            $('#privilegesTableDiv').on('click',
+                'span.removePrivilege',
+                function() {
+                    var row = this;
+                    var privilegeData = getPrivilegeData(row);
+                    row.remove();
+                    removePrivilege('@SignInManager.UserManager.GetUserId(User)',
+                            privilegeData.type,
+                            privilegeData.value)
+                        .done(function() {
+                            refreshAccountSignIn('@SignInManager.UserManager.GetUserId(User)');
+                        });
+                });
+
+            $('#addPrivilegeForm').on('submit',
+                function(event) {
+                    event.preventDefault();
+                    if ($(this).valid()) {
+                        var userId = '@SignInManager.UserManager.GetUserId(User)';
+                        var privilegeType = $('#privilegeType').val();
+                        var privilegeValue = $('#privilegeValue').val();
+                        addPrivilege(userId, privilegeType, privilegeValue)
+                            .fail(function(jqXHR) {
+                                if (jqXHR.status === 400) {
+                                    $.growl.error({ message: 'Invalid data! Could not add privilege.' });
+                                } else if (jqXHR.status === 409) {
+                                    $.growl.error({ message: 'Duplicate data! Could not add privilege.' });
+                                }
+                            })
+                            .done(function() {
+                                refreshAccountSignIn(userId);
+                            });
+                    }
+                });
+
+            $('#privilegeType').on('change',
+                function() {
+                    var val = $('#privilegeType').val();
+
+                    $.ajax({
+                        type: 'GET',
+                        url: '/Account/GetCurrentUserClaimsByType',
+                        accepts: 'text/json',
+                        data: {
+                            type: val
+                        },
+                        headers: {
+                            RequestVerificationToken:
+                                $('input:hidden[name="__RequestVerificationToken"]').val()
+                        }
+                    }).done(function(response) {
+                        var el = $('#privilegeValue');
+                        el.empty();
+                        $.each(response,
+                            function(key, value) {
+                                el.append($("<option></option>")
+                                    .attr("value", value.type).text(value.value));
+                            });
+                    });
+                });
+
+            function updatePrivilegesTable() {
+                return getCurrentUserPrivileges('@SignInManager.UserManager.GetUserId(User)')
+                    .done(function(data) {
+                        getPartialTable(data)
+                            .done(function(response) {
+                                var previousScroll = $('#privilegesTableScroll').scrollTop();
+                                var previousHeight = $('#privilegesTable').height();
+                                $('#privilegesTableDiv').html(response);
+
+                                var sizeDifference = previousHeight - $('#privilegesTable').height();
+                                $('#privilegesTableScroll').scrollTop(previousScroll - sizeDifference);
+                            });
+                    });
+            }
+
+            function getPartialTable(data) {
+                return $.ajax({
+                    url: '/Account/GetPartialTable',
+                    type: 'POST',
+                    accepts: 'text/json',
+                    data: {
+                        claims: data
+                    },
+                    headers: {
+                        RequestVerificationToken:
+                            $('input:hidden[name="__RequestVerificationToken"]').val()
+                    }
+                });
+            }
+
+            function addPrivilege(userId, claimType, claimValue) {
+                return $.ajax({
+                    type: "POST",
+                    url: '/api/UserClaims/AddUserClaim',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        userId: userId,
+                        claimType: claimType,
+                        claimValue: claimValue
+                    }),
+                    headers: {
+                        RequestVerificationToken:
+                            $('input:hidden[name="__RequestVerificationToken"]').val()
+                    }
+                });
+            }
+
+            function removePrivilege(userId, claimType, claimValue) {
+                return $.ajax({
+                    url: '/api/UserClaims/RemoveUserClaim',
+                    type: 'DELETE',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        userId: userId,
+                        claimType: claimType,
+                        claimValue: claimValue
+                    }),
+                    headers: {
+                        RequestVerificationToken:
+                            $('input:hidden[name="__RequestVerificationToken"]').val()
+                    }
+                });
+            }
+
+            function getCurrentUserPrivileges(userId) {
+                return $.ajax({
+                    url: '/api/UserClaims/GetUserClaimsByUserId',
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: {
+                        userId: userId
+                    },
+                    headers: {
+                        RequestVerificationToken:
+                            $('input:hidden[name="__RequestVerificationToken"]').val()
+                    }
+                });
+            }
+
+            function refreshAccountSignIn(userId) {
+                return $.ajax({
+                        url: '/Account/RefreshSignIn',
+                        type: 'POST',
+                        data: {
+                            userId: userId
+                        },
+                        headers: {
+                            RequestVerificationToken:
+                                $('input:hidden[name="__RequestVerificationToken"]').val()
+                        }
+                    })
+                    .done(function() {
+                        updatePrivilegesTable();
+                    });
+            }
+
+            function getPrivilegeData(element) {
+                var classes = element.className.split(' ');
+                var privilegeData = new Object();
+                var classPrefix = 'privilege-';
+                for (var i = 0; i < classes.length; i++) {
+                    if (classes[i].indexOf(classPrefix) >= 0) {
+                        var privilegeDataSliced = classes[i].split('-');
+                        privilegeData.type = privilegeDataSliced[1];
+                        privilegeData.value = privilegeDataSliced[2];
+                        break;
+                    }
+                }
+                return privilegeData;
+            }
+        })
+    </script>
+}

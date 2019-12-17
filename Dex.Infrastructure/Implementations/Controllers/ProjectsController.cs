@@ -22,7 +22,7 @@ namespace Dex.Infrastructure.Implementations.Controllers
         }
 
         [HttpPost]
-        [Route("AddProject")]
+        [Route(nameof(AddProject))]
         public IActionResult AddProject(ProjectsDTO dto)
         {
             if (dto == null || !ModelState.IsValid) { return BadRequest(); }
@@ -47,7 +47,7 @@ namespace Dex.Infrastructure.Implementations.Controllers
         }
 
         [HttpPut]
-        [Route("ModifyProject")]
+        [Route(nameof(ModifyProject))]
         public IActionResult ModifyProject(ProjectsDTO dto)
         {
             if (dto == null || !ModelState.IsValid) { return BadRequest(); }
@@ -72,7 +72,7 @@ namespace Dex.Infrastructure.Implementations.Controllers
         }
 
         [HttpDelete]
-        [Route("RemoveProject")]
+        [Route(nameof(RemoveProject))]
         public IActionResult RemoveProject(int? id)
         {
             if(id == null) { return BadRequest(); }
@@ -96,7 +96,7 @@ namespace Dex.Infrastructure.Implementations.Controllers
         }
 
         [HttpGet]
-        [Route("GetProject")]
+        [Route(nameof(GetProject))]
         public IActionResult GetProject(int? id)
         {
             if (id == null) { return BadRequest(); }
@@ -118,7 +118,7 @@ namespace Dex.Infrastructure.Implementations.Controllers
         }
 
         [HttpGet]
-        [Route("GetProjects")]
+        [Route(nameof(GetProjects))]
         public IActionResult GetProjects()
         {
             try

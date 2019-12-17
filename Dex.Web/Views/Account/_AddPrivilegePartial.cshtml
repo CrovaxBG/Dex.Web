@@ -1,0 +1,34 @@
+﻿@model Dex.Web.ViewModels.Identity.PrivilegeViewModel
+<partial name="_ValidationScriptsPartial" />
+<form id="addPrivilegeForm" method="post">
+    <div class="card">
+        <div class="card-body">
+            <div class="form-group">
+                <div class="float-left d-inline-block">
+                    <label asp-for="Type" class="col-form-label"></label>
+                </div>
+                <div class="float-right d-inline-block w-50">
+                    @Html.DropDownListFor(model => model.Value, Model.AvailablePrivilegeTypes, new {id="privilegeType", @class="form-control"})
+                    <span asp-validation-for="Type" class="text-danger"></span>
+                </div>
+            </div>
+
+            <br/>
+            <br/>
+
+            <div class="form-group">
+                <div class="float-left d-inline-block">
+                    <label asp-for="Value" class="col-form-label"></label>
+                </div>
+                <div class="float-right d-inline-block w-50">
+                    @Html.DropDownListFor(model => model.Value, Model.AvailablePrivilegeValues, new {id="privilegeValue", @class="form-control"})
+                    <span asp-validation-for="Value" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+        <button type="submit" class="hvr-bounce-to-top hvr-icon-fade card-footer btn">
+            <b>Add new privilege</b>
+            <i class="fa fa-plus hvr-icon"></i>
+        </button>
+    </div>
+</form>

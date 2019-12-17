@@ -1,5 +1,4 @@
 ﻿@inject SignInManager<AspNetUsers> SignInManager
-@using Dex.Common.Resources
 @using Dex.DataAccess.Models
 @using Microsoft.AspNetCore.Identity
 @{
@@ -10,7 +9,7 @@
 <div class="title text-center col-md-10" style="margin: 0 auto;">
     <h1>
         Downloads
-        <br/>
+        <br />
         <div class="vl-center" style="height: 280px;"></div>
     </h1>
     <div class="d-inline-block">
@@ -18,8 +17,8 @@
             <h5>
                 Here you can find my most of my projects. You can check out their source code, by clicking on the github icon or directly download an executable.
             </h5>
-            <br/>
-            <br/>
+            <br />
+            <br />
             <h5>
                 You can set favorite apps using the star icon, this will subscribe you to any news concerning the application.
             </h5>
@@ -29,8 +28,8 @@
             <h5>
                 Some of the apps are available for play directly through the web, scoreboards and matchmaking are cross-platform, meaning the desktop version can be paired with the web version.
             </h5>
-            <br/>
-            <br/>
+            <br />
+            <br />
             <h5>
                 The account used to log in into this website, is also shared between all applications with authentication.
             </h5>
@@ -217,7 +216,7 @@
                         var request = ajaxFavorite(resourceName, projectId);
                         request.fail(function (jqXHR) {
                             if (jqXHR.status === 401) {
-                                $.growl.warning({ message: 'You need to be logged in to set favorites ' });
+                                $.growl.warning({ message: 'You need to be logged in to set favorites' });
                             }
                         });
 

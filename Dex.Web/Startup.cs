@@ -1,22 +1,17 @@
 using System;
-using System.Linq;
 using System.Net;
 using System.Net.Mail;
-using System.Reflection;
 using System.Security.Claims;
 using AutoMapper;
 using Dex.DataAccess.Models;
 using Dex.Infrastructure.Contracts.IServices;
 using Dex.Infrastructure.Implementations.Services;
 using Dex.Web.MappingConfiguration;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query.Internal;
-using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -37,11 +32,17 @@ namespace Dex.Web
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<IISServerOptions>(options =>
+            {
+                options.AllowSynchronousIO = true;
+            });
+
             ConnectionString = Configuration.GetSection("ConnectionStrings:DefaultConnection").Value;
             var host = Configuration.GetSection("Data").GetSection("Host").Value;
             var projectsControllerBaseAddress = new Uri(host + "api/projects/");
             var projectFavoritesControllerBaseAddress = new Uri(host + "api/projectfavorites/");
             var loggerControllerBaseAddress = new Uri(host + "api/logger/");
+            var userClaimsControllerBaseAddress = new Uri(host + "api/userclaims/");
 
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
             services.AddRazorPages();
@@ -73,9 +74,9 @@ namespace Dex.Web
 
             services.ConfigureApplicationCookie(options =>
             {
-                options.LoginPath = $"/Identity/LogIn";
-                options.LogoutPath = $"/Identity/LogOut";
-                options.AccessDeniedPath = $"/Home/Index";
+                options.LoginPath = "/Identity/LogIn";
+                options.LogoutPath = "/Identity/LogOut";
+                options.AccessDeniedPath = "/Home/Index";
             });
 
             services.AddSingleton<IConfiguration>(Configuration);
@@ -105,20 +106,10 @@ namespace Dex.Web
                 };
             });
 
-            services.AddHttpClient<ILoggerService, LoggerService>(client =>
-            {
-                client.BaseAddress = loggerControllerBaseAddress;
-            });
-
-            services.AddHttpClient<IProjectsService, ProjectsService>(client =>
-            {
-                client.BaseAddress = projectsControllerBaseAddress;
-            });
-
-            services.AddHttpClient<IProjectFavoritesService, ProjectFavoritesService>(client =>
-            {
-                client.BaseAddress = projectFavoritesControllerBaseAddress;
-            });
+            services.AddHttpClient<ILoggerService, LoggerService>(client => client.BaseAddress = loggerControllerBaseAddress);
+            services.AddHttpClient<IProjectsService, ProjectsService>(client => client.BaseAddress = projectsControllerBaseAddress);
+            services.AddHttpClient<IProjectFavoritesService, ProjectFavoritesService>(client => client.BaseAddress = projectFavoritesControllerBaseAddress);
+            services.AddHttpClient<IUserClaimsService, UserClaimsService>(client => client.BaseAddress = userClaimsControllerBaseAddress);
 
             services.AddAuthorization(options =>
             {
@@ -128,7 +119,7 @@ namespace Dex.Web
                 });
                 options.AddPolicy("Admin", policy =>
                 {
-                    policy.RequireClaim(ClaimTypes.Role,"Admin");
+                    policy.RequireClaim("Role","Admin");
                 });
             });
         }

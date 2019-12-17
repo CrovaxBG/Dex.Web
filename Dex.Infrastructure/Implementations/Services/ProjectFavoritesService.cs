@@ -30,23 +30,28 @@ namespace Dex.Infrastructure.Implementations.Services
 
         public async Task<List<ProjectFavoritesDTO>> GetFavoritesByUser(string userId)
         {
-            var response = await _client.GetAsync($"{nameof(ProjectFavoritesController.GetFavoritesByUser)}?userId={userId}");
+            var response =
+                await _client.GetAsync($"{nameof(ProjectFavoritesController.GetFavoritesByUser)}?userId={userId}");
             if (response.IsSuccessStatusCode)
             {
                 var message = await response.Content.ReadAsJsonAsync<List<ProjectFavoritesDTO>>();
                 return message;
             }
+
             return new List<ProjectFavoritesDTO>();
         }
 
         public async Task<List<ProjectFavoritesDTO>> GetFavoritesByProject(int projectId)
         {
-            var response = await _client.GetAsync($"{nameof(ProjectFavoritesController.GetFavoritesByProject)}?projectId={projectId}");
+            var response =
+                await _client.GetAsync(
+                    $"{nameof(ProjectFavoritesController.GetFavoritesByProject)}?projectId={projectId}");
             if (response.IsSuccessStatusCode)
             {
                 var message = await response.Content.ReadAsJsonAsync<List<ProjectFavoritesDTO>>();
                 return message;
             }
+
             return new List<ProjectFavoritesDTO>();
         }
     }

@@ -1,0 +1,47 @@
+﻿@using Dex.DataAccess.Models
+@using Microsoft.AspNetCore.Identity
+@model IEnumerable<Dex.Web.ViewModels.Identity.PrivilegeViewModel>
+@inject SignInManager<AspNetUsers> SignInManager
+    <div id="privilegesTableScroll" class="scrollable table-bordered">
+        <table id="privilegesTable" class="table" data-table-theme="default zebra">
+            <thead>
+                <tr>
+                    <th>
+                        Type
+                    </th>
+                    <th>
+                        Value
+                    </th>
+                    @if (SignInManager.IsSignedIn(User) && User.HasClaim("RemoveRecord", "UserPrivilege")) //add empty header cell for better view
+                    {
+                        <th></th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var privilege in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => privilege.Type)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => privilege.Value)
+                        </td>
+                        @if (SignInManager.IsSignedIn(User) && User.HasClaim("RemoveRecord", "UserPrivilege"))
+                        {
+                            <td>
+                                <div class="float-right">
+                                    <span class="removePrivilege privilege-@privilege.Type.Replace(" ","")-@privilege.Value.Replace(" ","") fa fa-minus color-red clickable"></span>
+                                </div>
+                            </td>
+                        }
+                        else if (SignInManager.IsSignedIn(User) && User.HasClaim("AddRecord", "UserPrivilege")) //add empty cells for better view
+                        {
+                            <td></td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
