@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace Dex.Web.ViewModels.Identity
+namespace Dex.Web.ViewModels.Account
 {
     public class PrivilegeViewModel
     {

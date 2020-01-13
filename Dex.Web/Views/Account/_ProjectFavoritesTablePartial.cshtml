@@ -1,0 +1,46 @@
+﻿@using Dex.DataAccess.Models
+@using Microsoft.AspNetCore.Identity
+@model IEnumerable<Dex.Web.ViewModels.Account.ProjectFavoriteViewModel>
+@inject SignInManager<AspNetUsers> SignInManager
+<div id="projectFavoritesTableScroll" class="scrollable table-bordered">
+    <table id="projectFavoritesTable" class="table" data-table-theme="default zebra">
+        @if (!Model.Any())
+        {
+            <tr>
+                <td>None</td>
+            </tr>
+        }
+        else
+        {
+            <thead>
+            <tr>
+                <th>
+                    Project Name
+                </th>
+                @if (Model.Any() && SignInManager.IsSignedIn(User) && User.HasClaim("RemoveRecord", "ProjectFavorite"))
+                {
+                    <th></th>
+                }
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var projectFavorite in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => projectFavorite.Name)
+                    </td>
+                    @if (SignInManager.IsSignedIn(User) && User.HasClaim("RemoveRecord", "ProjectFavorite"))
+                    {
+                        <td>
+                            <div class="float-right">
+                                <span class="removeProjectFavorite projectFavorite-@projectFavorite.Id fa fa-minus color-red clickable"></span>
+                            </div>
+                        </td>
+                    }
+                </tr>
+            }
+            </tbody>
+        }
+    </table>
+</div>

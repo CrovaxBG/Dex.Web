@@ -15,6 +15,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Newtonsoft.Json;
 using DexContext = Dex.DataAccess.Models.DexContext;
 
 namespace Dex.Web
@@ -122,6 +123,9 @@ namespace Dex.Web
                     policy.RequireClaim("Role","Admin");
                 });
             });
+
+            services.AddControllers()
+                .AddNewtonsoftJson(x => { x.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore; });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

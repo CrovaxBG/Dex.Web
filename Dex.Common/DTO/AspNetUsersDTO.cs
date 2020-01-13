@@ -8,6 +8,42 @@ namespace Dex.Common.DTO
 
     public class AspNetUsersDTO
     {
+        public ICollection<AspNetUserClaimsDTO> AspNetUserClaims
+        {
+            get;
+            set;
+        }
+
+        public ICollection<AspNetUserLoginsDTO> AspNetUserLogins
+        {
+            get;
+            set;
+        }
+
+        public ICollection<AspNetUserRolesDTO> AspNetUserRoles
+        {
+            get;
+            set;
+        }
+
+        public ICollection<AspNetUserTokensDTO> AspNetUserTokens
+        {
+            get;
+            set;
+        }
+
+        public ICollection<ProjectFavoritesDTO> ProjectFavorites
+        {
+            get;
+            set;
+        }
+
+        public ICollection<AspNetUsersSessionDTO> AspNetUsersSession
+        {
+            get;
+            set;
+        }
+
         public String Id
         {
             get;
@@ -93,36 +129,6 @@ namespace Dex.Common.DTO
         }
 
         public Int32 AccessFailedCount
-        {
-            get;
-            set;
-        }
-
-        public ICollection<AspNetUserClaimsDTO> AspNetUserClaims
-        {
-            get;
-            set;
-        }
-
-        public ICollection<AspNetUserLoginsDTO> AspNetUserLogins
-        {
-            get;
-            set;
-        }
-
-        public ICollection<AspNetUserRolesDTO> AspNetUserRoles
-        {
-            get;
-            set;
-        }
-
-        public ICollection<AspNetUserTokensDTO> AspNetUserTokens
-        {
-            get;
-            set;
-        }
-
-        public ICollection<ProjectFavoritesDTO> ProjectFavorites
         {
             get;
             set;

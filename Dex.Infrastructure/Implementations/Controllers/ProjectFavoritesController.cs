@@ -1,9 +1,17 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
+using System.Threading.Tasks;
 using AutoMapper;
 using Dex.Common.DTO;
 using Dex.DataAccess.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using DexContext = Dex.DataAccess.Models.DexContext;
 
 namespace Dex.Infrastructure.Implementations.Controllers
@@ -75,8 +83,11 @@ namespace Dex.Infrastructure.Implementations.Controllers
 
             try
             {
-                return Ok(_context.ProjectFavorites.Where(p => p.UserId == userId)
-                    .Select(p => _mapper.Map<ProjectFavoritesDTO>(p)));
+                var result = _context.ProjectFavorites.Include(p => p.User).Include(p => p.Project)
+                    .Where(p => p.UserId == userId)
+                    .Select(p => _mapper.Map<ProjectFavoritesDTO>(p)).ToList();
+
+                return Ok(result);
             }
             catch (Exception)
             {

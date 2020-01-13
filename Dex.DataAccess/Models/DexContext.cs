@@ -9,6 +9,7 @@ namespace Dex.DataAccess.Models
         public virtual DbSet<Log> Log { get; set; }
         public virtual DbSet<ProjectFavorites> ProjectFavorites { get; set; }
         public virtual DbSet<Projects> Projects { get; set; }
+        public virtual DbSet<AspNetUsersSession> AspNetUsersSession { get; set; }
 
         public DexContext(DbContextOptions<DexContext> options)
             : base(options)
@@ -173,6 +174,22 @@ namespace Dex.DataAccess.Models
                 entity.Property(e => e.RepositoryLink).HasMaxLength(512);
             });
 
+            modelBuilder.Entity<AspNetUsersSession>(entity =>
+            {
+                entity.Property(e => e.LoginDate).HasColumnType("datetime");
+
+                entity.Property(e => e.LogoutDate).HasColumnType("datetime");
+
+                entity.Property(e => e.UserId)
+                    .IsRequired()
+                    .HasMaxLength(100);
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.AspNetUsersSession)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_AspNetUsersSession_AspNetUsers");
+            });
         }
 
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);

@@ -1,0 +1,40 @@
+﻿@model Dex.Web.ViewModels.Account.AccountInformationViewModel
+
+<h4>Account details</h4>
+<br />
+<div class="row">
+    <div class="col col-md-4">
+        <div class="form-group">
+            <div class="float-left d-inline-block">
+                <label asp-for="Username" class="col-form-label"></label>
+            </div>
+            <div class="float-right d-inline-block">
+                <input asp-for="Username" class="form-control" readonly="readonly" />
+            </div>
+            <span asp-validation-for="Username" class="text-danger"></span>
+        </div>
+        <br />
+        <br />
+        <div class="form-group">
+            <div class="float-left d-inline-block">
+                <label asp-for="Email" class="col-form-label"></label>
+            </div>
+            <div class="float-right d-inline-block">
+                <input asp-for="Email" class="form-control" readonly="readonly" />
+            </div>
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="text-center card col-md-8 p-0">
+        <label class="card-header" asp-for="Privileges"></label>
+
+        <div id="privilegesTableDiv"></div>
+
+        @if (User.HasClaim("AddRecord", "UserPrivilege") && Model.Privileges.FirstOrDefault() != null)
+        {
+            <br />
+            //you can only add claims that you already have, if list is empty, you cant add any claims
+            <partial name="_AddPrivilegePartial" model="Model.Privileges.FirstOrDefault()" />
+        }
+    </div>
+</div>

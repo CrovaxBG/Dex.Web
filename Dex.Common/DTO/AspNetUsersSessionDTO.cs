@@ -6,21 +6,27 @@ namespace Dex.Common.DTO
     using System.Collections;
     using System.Collections.Generic;
 
-    public class ProjectFavoritesDTO
+    public class AspNetUsersSessionDTO
     {
+        public Int32 Id
+        {
+            get;
+            set;
+        }
+
         public String UserId
         {
             get;
             set;
         }
 
-        public Int32 ProjectId
+        public DateTime LoginDate
         {
             get;
             set;
         }
 
-        public ProjectsDTO Project
+        public Nullable<DateTime> LogoutDate
         {
             get;
             set;

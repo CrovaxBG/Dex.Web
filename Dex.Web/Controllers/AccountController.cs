@@ -7,10 +7,12 @@ using Dex.Common.DTO;
 using Dex.Common.Extensions;
 using Dex.DataAccess.Models;
 using Dex.Infrastructure.Contracts.IServices;
+using Dex.Web.ViewModels.Account;
 using Dex.Web.ViewModels.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
 
 namespace Dex.Web.Controllers
@@ -19,13 +21,16 @@ namespace Dex.Web.Controllers
     {
         private readonly SignInManager<AspNetUsers> _signInManager;
         private readonly UserManager<AspNetUsers> _userManager;
-        private readonly IUserClaimsService _userClaimsService;
+        private readonly IProjectFavoritesService _projectFavoritesService;
 
-        public AccountController(SignInManager<AspNetUsers> signInManager, UserManager<AspNetUsers> userManager, IUserClaimsService userClaimsService)
+        public AccountController(
+            SignInManager<AspNetUsers> signInManager,
+            UserManager<AspNetUsers> userManager,
+            IProjectFavoritesService projectFavoritesService)
         {
             _signInManager = signInManager;
             _userManager = userManager;
-            _userClaimsService = userClaimsService;
+            _projectFavoritesService = projectFavoritesService;
         }
 
         public async Task<IActionResult> Index()
@@ -58,11 +63,17 @@ namespace Dex.Web.Controllers
                 .Select(c => new SelectListItem {Text = c.Value, Value = c.Value})
                 .ToList();
 
+            var projectFavorites = (await _projectFavoritesService.GetFavoritesByUser(user.Id))
+                .Select(p => new ProjectFavoriteViewModel {Id = p.ProjectId, Name = p.Project.Name}).ToList();
+
             return new AccountInformationViewModel
             {
+                CurrentUserId = (await GetCurrentUserAsync()).Id,
+                SelectedUserId = (await GetCurrentUserAsync()).Id,
                 Email = user.Email,
                 Username = user.UserName,
-                Privileges = currentUserClaims.Select(Convert).ToList()
+                Privileges = currentUserClaims.Select(Convert).ToList(),
+                ProjectFavorites = projectFavorites
             };
 
             PrivilegeViewModel Convert(Claim c)
@@ -87,12 +98,22 @@ namespace Dex.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult GetPartialTable(IEnumerable<AspNetUserClaimsDTO> claims)
+        public IActionResult GetPrivilegesPartialTable(IEnumerable<AspNetUserClaimsDTO> claims)
         {
             return PartialView("_PrivilegesTablePartial", claims.Select(c => new PrivilegeViewModel
             {
                 Type = c.ClaimType.Substring(c.ClaimType.LastIndexOf(@"/", StringComparison.Ordinal) + 1).ToUpperFirstChar().SplitOnCapitalLetters(),
                 Value = c.ClaimValue.ToUpperFirstChar().SplitOnCapitalLetters(),
+            }));
+        }
+
+        [HttpPost]
+        public IActionResult GetProjectFavoritesPartialTable(IEnumerable<ProjectFavoritesDTO> projectFavorites)
+        {
+            return PartialView("_ProjectFavoritesTablePartial", projectFavorites.Select(p => new ProjectFavoriteViewModel
+            {
+                Id = p.ProjectId,
+                Name = p.Project.Name
             }));
         }
 

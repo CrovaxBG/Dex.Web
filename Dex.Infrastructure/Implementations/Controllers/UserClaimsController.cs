@@ -45,7 +45,7 @@ namespace Dex.Infrastructure.Implementations.Controllers
                 }
 
                 var res = await _userManager.AddClaimAsync(user,
-                    new Claim(dto.ClaimType.ToLower().ToUpperFirstChar(), dto.ClaimValue.ToLower().ToUpperInvariant())); // normalize values
+                    new Claim(dto.ClaimType.ToLower().ToUpperFirstChar(), dto.ClaimValue.ToLower().ToUpperFirstChar())); // normalize values
 
                 if (res.Succeeded)
                 {
